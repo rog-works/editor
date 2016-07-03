@@ -9,7 +9,7 @@ router.get('/', (req, res) => {
 	Render.json(res, Entity.entries());
 });
 
-router.get('/:path([\w\-./]+)', (req, res) => {
+router.get('/:path([\\w\\-./]+)', (req, res) => {
 	console.log('show able!!', req.params.path);
 	Render.json(res, Entity.at(req.params.path));
 });
@@ -19,17 +19,17 @@ router.post('/', (req, res) => {
 	Render.json(res, Entity.create(req.params.path));
 });
 
-router.put('/:path([\w\-./]+)', (req, res) => {
+router.put('/:path([\\w\\-./]+)', (req, res) => {
 	console.log(`update able!! ${req.params.path} ${req.body.content}`);
 	Render.json(res, Entity.update(req.params.path, req.body.content));
 });
 
-router.option('/:path([\w\-./]+)/:to([\w\-./]+)', (req, res) => {
+router.options('/:path([\\w\\-./]+)/:to([\\w\\-./]+)', (req, res) => {
 	console.log(`rename able!! ${req.params.path} ${req.body.to}`);
 	Render.json(res, Entity.rename(req.params.path, req.body.to));
 });
 
-router.delete('/:path([\w\-./]+)', (req, res) => {
+router.delete('/:path([\\w\\-./]+)', (req, res) => {
 	console.log('destroy able!!', req.params.path);
 	Render.json(res, Entity.destroy(req.params.path));
 });

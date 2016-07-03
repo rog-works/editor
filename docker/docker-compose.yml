@@ -1,9 +1,9 @@
 editor-app:
   image: localhost:49000/editor:latest
   volumes:
-    - /vagrant/md/app:/opt/app
+    - /vagrant/editor/app:/opt/app
   ports:
-    - "18082:80"
+    - "18081:80"
   environment:
     MAIN_SCRIPT: /opt/app/server.js
     PORT: 80

@@ -9,29 +9,22 @@
 		<header>
 		</header>
 
-		<main style="width: 100%; height: 100%">
+		<main id="content" style="width: 100%; height: 100%">
 			<div style="width: 70%; float: left">
 				<div id="editor" style="height: 480px"></div>
 			</div>
-			<div style="width: 30%; float: right">
-				<div style="width: 90%; float: left">
-					<table style="width: 100%">
+			<div id="menu" style="width: 30%; float: right">
+				<div id="menu-entry" style="width: 90%; float: left">
+					<table id="entry-header" style="width: 100%">
 						<tr>
 							<td style="width: 70%"></td>
-							<td style="width: 30%"><form action="/entry" method="POST"><a href="#">+</a></form></td>
+							<td style="width: 30%"><form action="/entry" method="POST"><input id="entry-append" type="button" value="+"></input></form></td>
 						</tr>
 					</table>
-					<ul>
-						<li>/.git</li>
-						<li>/container1</li>
-						<li>- /app</li>
-						<li>- /inject</li>
-						<li><a href="/entry/1">- Dockerfile</a></li>
-						<li>/container2</li>
-						<li>- Dockerfile</li>
+					<ul id="entry-main">
 					</ul>
 				</div>
-				<div style="width: 10%; float: right">
+				<div id="menu-controlls" style="width: 10%; float: right">
 					<ul>
 						<li><a href="/entry">Entry</a></li>
 						<li>Git</li>
@@ -46,6 +39,7 @@
 		</footer>
 		<script src="https://code.jquery.com/jquery-3.0.0.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.0/ace.js"></script>
+		<script src="client.js" type="text/javascript" chatset="utf8"></script>
 		<script>
 			'use strict';
 			let e = ace.edit('editor');

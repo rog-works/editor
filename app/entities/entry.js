@@ -1,10 +1,14 @@
 'use strict';
 
 let FileProvider = require('../helpers/fileprovider');
+let Path = require('path');
 
 /** type defines */
 const TYPE_FILE = 'file';
 const TYPE_DIRECTORY = 'directory';
+
+/** root directory */
+const ROOT_DIRECTORY = '/opt/app/works';
 
 /** Entry entity keys */
 let keys = () => {
@@ -17,7 +21,10 @@ let keys = () => {
  */
 let entries = () => {
 	try {
-		return FileProvider.entries('/opt/app/works');
+		return FileProvider.entries(ROOT_DIRECTORY).map((path) => {
+			let type = FileProvider.isFile(path) ? TYPE_FILE : TYPE_DIRECTORY;
+			return toEntity(path, type, '');
+		});
 	} catch (error) {
 		console.log(error);
 		return [];
@@ -111,6 +118,7 @@ let destroy = (path) => {
  */
 let toEntity = (path, type, content) => {
 	return {
+		name: Path.basename(path),
 		path: path,
 		type: type,
 		conotent: content
@@ -120,7 +128,9 @@ let toEntity = (path, type, content) => {
 module.exports = {
 	keys: keys,
 	entries: entries,
-	get: get,
+	at: at,
 	create: create,
+	update: update,
+	rename: rename,
 	destroy: destroy
 };

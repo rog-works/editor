@@ -3,15 +3,15 @@
 let ProcessProvider = require('../helpers/processprovider');
 let docker = new ProcessProvider('docker');
 
-/** File entity keys */
+/** result keys */
 let keys = () => {
 	return ['command', 'output', 'status'];
 };
 
 /**
- * Execution by 'docker info <container-id>'
- * @param string container id
- * @return Process Process entity
+ * Execution to 'docker info <container-id>'
+ * @param string containerId container id
+ * @return ProcessResult result
  */
 let info = (containerId) => {
 	let builder = docker.command('info')
@@ -20,9 +20,9 @@ let info = (containerId) => {
 };
 
 /**
- * Execution by 'docker ps [-a] [status=exited]'
- * @param object Option args object. require {'all': any, 'exited': any}
- * @return Process Process entity
+ * Execution to 'docker ps [-a] [status=exited]'
+ * @param object options Option args. format: {'all': any, 'exited': any}
+ * @return ProcessResult result
  */
 let ps = (options = {}) => {
 	let builder = docker.command('ps')
@@ -32,9 +32,9 @@ let ps = (options = {}) => {
 };
 
 /**
- * Execution by 'docker images [-a] [dangling=true]'
- * @param object Option args object. require {'all': any, 'dangling': any}
- * @return Process Process entity
+ * Execution to 'docker images [-a] [dangling=true]'
+ * @param object options Option args. format: {'all': any, 'dangling': any}
+ * @return ProcessResult result
  */
 let images = (options = {}) => {
 	let builder = docker.command('images')
@@ -44,9 +44,9 @@ let images = (options = {}) => {
 };
 
 /**
- * Execution by 'docker rm <container-id>'
- * @param string container id
- * @return Process Process entity
+ * Execution to 'docker rm <container-id>'
+ * @param string containerId container id
+ * @return ProcessResult result
  */
 let rm = (containerId) {
 	let builder = docker.command('rm')
@@ -55,9 +55,9 @@ let rm = (containerId) {
 };
 
 /**
- * Execution by 'docker rmi <image-id>'
- * @param string image id
- * @return Process Process entity
+ * Execution to 'docker rmi <image-id>'
+ * @param string imageId image id
+ * @return ProcessResult result
  */
 let rmi = (imageId) {
 	let builder = docker.command('rmi')
@@ -66,10 +66,10 @@ let rmi = (imageId) {
 };
 
 /**
- * Execution by 'docker <command> [options...]'
+ * Execution to 'docker <command> [options...]'
  * @param string command Docker command
  * @param string[] Command arguments
- * @return Process Process entity
+ * @return ProcessResult result
  */
 let command = (command, args) => {
 	let builder = docker.command(command);
@@ -80,9 +80,9 @@ let command = (command, args) => {
 };
 
 /**
- * Execution proxy
- * @param CommandBuilder builder Docker command builder
- * @return Process Process entity
+ * Execution to result
+ * @param CommandBuilder builder Process command builder
+ * @return ProcessResult result
  */
 let execProxy = (builder) => {
 	let command = builder.command();
