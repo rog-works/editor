@@ -5,7 +5,16 @@ let docker = new ProcessProvider('docker');
 
 /** result keys */
 let keys = () => {
-	return ['command', 'output', 'status'];
+	return ['query', 'output', 'status'];
+};
+
+/**
+ * Execution to 'service docker start'
+ * @return ProcessResult result
+ */
+let start = () => {
+	let builder = (new ProcessProvider('service')).add('docker').add('start');
+	return execProxy(builder);
 };
 
 /**
@@ -14,8 +23,7 @@ let keys = () => {
  * @return ProcessResult result
  */
 let info = (containerId) => {
-	let builder = docker.command('info')
-		.require(containerId);
+	let builder = docker.command('info').add(containerId);
 	return execProxy(builder);
 };
 
@@ -26,8 +34,8 @@ let info = (containerId) => {
  */
 let ps = (options = {}) => {
 	let builder = docker.command('ps')
-		.option('-a', 'all' in option)
-		.option('status=exited', 'exited' in options);
+		.add('-a', !!options.all)
+		.add('status=exited', !!options.exited);
 	return execProxy(builder);
 };
 
@@ -38,8 +46,8 @@ let ps = (options = {}) => {
  */
 let images = (options = {}) => {
 	let builder = docker.command('images')
-		.option('-a', 'all' in option)
-		.option('dangling=true', 'dangling' in options);
+		.add('-a', !!options.all)
+		.add('dangling=true', !!options.dangling);
 	return execProxy(builder);
 };
 
@@ -48,9 +56,8 @@ let images = (options = {}) => {
  * @param string containerId container id
  * @return ProcessResult result
  */
-let rm = (containerId) {
-	let builder = docker.command('rm')
-		.require(containerId);
+let rm = (containerId) => {
+	let builder = docker.command('rm').add(containerId);
 	return execProxy(builder);
 };
 
@@ -59,9 +66,19 @@ let rm = (containerId) {
  * @param string imageId image id
  * @return ProcessResult result
  */
-let rmi = (imageId) {
-	let builder = docker.command('rmi')
-		.require(imageId);
+let rmi = (imageId) => {
+	let builder = docker.command('rmi').add(imageId);
+	return execProxy(builder);
+};
+
+/**
+ * Execution to 'docker rmi <image-id>'
+ * @param string image Docker image name
+ * @param string tag image tag
+ * @return ProcessResult result
+ */
+let pull = (image, tag = 'latest') => {
+	let builder = docker.command('pull').add(`${image}:${tag}`);
 	return execProxy(builder);
 };
 
@@ -74,7 +91,7 @@ let rmi = (imageId) {
 let command = (command, args) => {
 	let builder = docker.command(command);
 	for (let arg of args) {
-		builder.arg(arg);
+		builder.add(arg);
 	}
 	return execProxy(builder);
 };
@@ -85,11 +102,11 @@ let command = (command, args) => {
  * @return ProcessResult result
  */
 let execProxy = (builder) => {
-	let command = builder.command();
+	let query = builder.build();
 	let output = builder.exec();
 	let status = builder.status();
 	return {
-		command: command,
+		query: query,
 		output: output,
 		status: status
 	};
@@ -97,10 +114,10 @@ let execProxy = (builder) => {
 
 module.exports = {
 	info: info,
-	ls: ls,
 	ps: ps,
 	images: images,
 	rm: rm,
 	rmi: rmi,
+	pull: pull,
 	command: command
 };

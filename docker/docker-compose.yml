@@ -7,4 +7,5 @@ editor-app:
   environment:
     MAIN_SCRIPT: /opt/app/server.js
     PORT: 80
+  privileged: true
 
