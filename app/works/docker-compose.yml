@@ -1,0 +1,2 @@
+editor:
+	image: localhost:49000/editor:latest

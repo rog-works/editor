@@ -2,15 +2,24 @@
 
 let fs = require('fs');
 let Path = require('path');
+let glob = require('glob');
 
 /**
  * get all entry paths from target directory
  * @param string directory Target directory
+ * @param bool nameOnly Result to file name
  * @return string[] entry paths
  * @throws no such file or directory
  */
-let entries = (directory) => {
-	return fs.readdirSync(directory);
+let entries = (directory, nameOnly = true) => {
+	let entries = glob.sync(directory + '/*', {nosort: true});
+	entries.sort(_sort);
+	if (nameOnly) {
+		return entries.map((self) => {
+			return self.substr(directory.length);
+		});
+	}
+	return entries;
 };
 
 /**
@@ -27,13 +36,13 @@ let at = (path) => {
 /**
  * Create by path and content body
  * @param string path File save path
- * @param string file File content body
+ * @param string content File content body
  * @throws no such file or directory
  */
 let create = (path, content) => {
 	let dir = Path.dirname(path);
-	if (!exists(dir)) {
-		mkdir(dir);
+	if (!_exists(dir)) {
+		_mkdir(dir);
 	}
 	fs.writeFileSync(path, content, 'utf8');
 };
@@ -41,7 +50,7 @@ let create = (path, content) => {
 /**
  * Update by path and content body
  * @param string path File save path
- * @param string file File content body
+ * @param string content File content body
  * @throws no such file or directory
  */
 let update = (path, content) => {
@@ -87,7 +96,7 @@ let isFile = (path) => {
  * @param string path File or Directory path
  * @return bool existing to true
  */
-let exists = (path) => {
+let _exists = (path) => {
 	try {
 		fs.statSync(path);
 		return true;
@@ -100,14 +109,32 @@ let exists = (path) => {
  * Create directory by path
  * @param string path Directory path
  */
-let mkdir = (path) => {
+let _mkdir = (path) => {
 	let dirs = path.split('/');
 	let curr = '';
 	for (let dir of dirs) {
 		curr += '/' + dir;
-		if (!exists(curr)) {
+		if (!_exists(curr)) {
 			fs.mkdirSync(curr);
 		}
+	}
+};
+
+/**
+ * entry sorter
+ * @param string a target a
+ * @param string b target b
+ * @return int string comparation
+ */
+let _sort = (a, b) => {
+	let aIsFile = isFile(a);
+	let bIsFile = isFile(b);
+	let isFiles = aIsFile && bIsFile;
+	let isDirs = (!aIsFile) && (!bIsFile);
+	if (isFiles || isDirs) {
+		return a === b ? 0 : (a > b ? 1 : -1);
+	} else {
+		return aIsFile ? 1 : -1;
 	}
 };
 

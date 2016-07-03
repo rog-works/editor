@@ -17,13 +17,16 @@ let keys = () => {
 
 /**
  * get all entry paths from '/opt/app/works'
+ * @param string relDirPath Target directory relative path from '/opt/app/works'
  * @return string[] entry paths
  */
-let entries = () => {
+let entries = (relDirPath = '') => {
 	try {
-		return FileProvider.entries(ROOT_DIRECTORY).map((path) => {
-			let type = FileProvider.isFile(path) ? TYPE_FILE : TYPE_DIRECTORY;
-			return toEntity(path, type, '');
+		let realDirPath = _toRealPath(relDirPath);
+		return FileProvider.entries(realDirPath, false).map((self) => {
+			let relPath = _toRelativePath(self);
+			let type = _getType(self);
+			return _toEntity(relPath, type, '');
 		});
 	} catch (error) {
 		console.log(error);
@@ -33,14 +36,15 @@ let entries = () => {
 
 /**
  * Find at entry
- * @param string path Entry path
+ * @param string relPath Entry relative path from '/opt/app/works'
  * @return Entry Entry entity
  */
-let at = (path) => {
+let at = (relPath) => {
 	try {
-		let content = FileProvider.at(path);
-		let type = FileProvider.isFile(path) ? TYPE_FILE : TYPE_DIRECTORY;
-		return toEntiry(path, type, content);
+		let realPath = _toRealPath(relPath);
+		let content = FileProvider.at(realPath);
+		let type = _getType(realPath);
+		return _toEntity(realPath, type, content);
 	} catch (error) {
 		console.log(error);
 		return null;
@@ -49,14 +53,14 @@ let at = (path) => {
 
 /**
  * Create by path and content body
- * @param string path Entry path
- * @param string entry Entry content body
+ * @param string relPath Entry relative path from '/opt/app/works'
  * @return Entry Entry entity
  */
-let create = (path, content) => {
+let create = (relPath) => {
 	try {
-		FileProvider.create(path, content);
-		return toEntity(path, TYPE_FILE, content);
+		let realPath = _toRealPath(relPath);
+		FileProvider.create(realPath, '');
+		return _toEntity(realPath, TYPE_FILE, '');
 	} catch (error) {
 		console.log(error);
 		return null;
@@ -65,14 +69,15 @@ let create = (path, content) => {
 
 /**
  * Update by path and content body
- * @param string path Entry path
+ * @param string relPath Entry relative path from '/opt/app/works'
  * @param string entry Entry content body
  * @return Entry Entry entity
  */
-let update = (path, content) => {
+let update = (relPath, content) => {
 	try {
-		FileProvider.update(path, content);
-		return toEntity(path, TYPE_FILE, content);
+		let realPath = _toRealPath(relPath);
+		FileProvider.update(realPath, content);
+		return _toEntity(realPath, TYPE_FILE, content);
 	} catch (error) {
 		console.log(error);
 		return null;
@@ -81,13 +86,13 @@ let update = (path, content) => {
 
 /**
  * Rename by path to
- * @param string path Entry from path
- * @param string to Entry to path
+ * @param string relPath Entry relative path from '/opt/app/works'
+ * @param string relToPath Entry to relative path
  * @return boolean Rename action result
  */
-let rename = (path, to) => {
+let rename = (relPath, relToPath) => {
 	try {
-		FileProvider.rename(path, to);
+		FileProvider.rename(_toRealPath(relPath), _toRealPath(relToPath));
 		return true;
 	} catch (error) {
 		console.log(error);
@@ -97,12 +102,12 @@ let rename = (path, to) => {
 
 /**
  * Destroy by path
- * @param string path Entry path
+ * @param string relPath Entry relative path from '/opt/app/works'
  * @return boolean Destroy action result
  */
-let destroy = (path) => {
+let destroy = (relPath) => {
 	try {
-		FileProvider.remove(path);
+		FileProvider.remove(_toRealPath(relPath));
 		return true;
 	} catch (error) {
 		console.log(error);
@@ -110,16 +115,45 @@ let destroy = (path) => {
 	}
 };
 
+
+/**
+ * Get entry type
+ * @param string realPath Entity real path
+ * @return string entry type of 'file' or 'directory'
+ */
+let _getType = (realPath) => {
+	return FileProvider.isFile(realPath) ? TYPE_FILE : TYPE_DIRECTORY;
+};
+
+/**
+ * Relative path to real path
+ * @param string relPath Entry relative path
+ * @return string Real path
+ */
+let _toRealPath = (relPath) => {
+	return ROOT_DIRECTORY + relPath;
+}
+
+/**
+ * Real path to Relative path
+ * @param string realPath Entry real path
+ * @return string Relative path
+ */
+let _toRelativePath = (realPath) => {
+	return realPath.substr(ROOT_DIRECTORY.length);
+};
+
 /**
  * Entry to Entity
- * @param string path Entry path
+ * @param string realPath Entry real path
+ * @param strring type Entry type
  * @param string content Entry content body
  * @return Entry Entry entity
  */
-let toEntity = (path, type, content) => {
+let _toEntity = (realPath, type, content) => {
 	return {
-		name: Path.basename(path),
-		path: path,
+		name: Path.basename(realPath),
+		path: _toRelativePath(realPath),
 		type: type,
 		conotent: content
 	};
