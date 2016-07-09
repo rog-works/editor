@@ -26,7 +26,7 @@ let entries = (relDirPath = '') => {
 		return FileProvider.entries(realDirPath, false).map((self) => {
 			let relPath = _toRelativePath(self);
 			let type = _getType(self);
-			return _toEntity(relPath, type, '');
+			return _toEntity(self, type, '');
 		});
 	} catch (error) {
 		console.log(error);
@@ -155,7 +155,7 @@ let _toEntity = (realPath, type, content) => {
 		name: Path.basename(realPath),
 		path: _toRelativePath(realPath),
 		type: type,
-		conotent: content
+		content: content
 	};
 }
 

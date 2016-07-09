@@ -4,46 +4,78 @@
 		<title>Editor</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+		<style type="text/css">
+			#editor {
+				height: 480px;
+			}
+			#side-menu {
+				position: fixed;
+				right: 0;
+				width: 240px;
+			}
+			.menu-left {
+				float: left;
+				width: 208px;
+				height: 480px;
+				background-color: whitesmoke;
+			}
+			.menu-right {
+				float: right;
+				width: 32px;
+			}
+			#entry-main td {
+				padding: 0;
+			}
+			.control-bg {
+				width: 32px;
+				height: 32px;
+				display: inline-block;
+				margin: 0 0 0 0;
+				background-position: 0 -64px;
+				background-size: 32px 32px;
+			}
+			.icon-entry {
+				background-image: url('https://cdn3.iconfinder.com/data/icons/document-icons-7/512/BT_folder_file_open-128.png');
+			}
+			.icon-git {
+				background-image: url('https://cdn0.iconfinder.com/data/icons/octicons/1024/mark-github-128.png');
+			}
+			.icon-docker {
+				background-image: url('https://maxcdn.icons8.com/wp-content/uploads/2016/03/docker.png');
+			}
+			.icon-log {
+				background-image: url('https://cdn2.iconfinder.com/data/icons/windows-8-metro-style/128/login.png');
+			}
+		</style>
 	</head>
 	<body>
-		<header>
-		</header>
-
-		<main id="content" style="width: 100%; height: 100%">
-			<div style="width: 70%; float: left">
-				<div id="editor" style="height: 480px"></div>
-			</div>
-			<div id="menu" style="width: 30%; float: right">
-				<div id="menu-entry" style="width: 90%; float: left">
-					<table id="entry-header" style="width: 100%">
-						<tr>
-							<td style="width: 70%"></td>
-							<td style="width: 30%"><form action="/entry" method="POST"><input id="entry-append" type="button" value="+"></input></form></td>
-						</tr>
-					</table>
-					<ul id="entry-main">
-					</ul>
+		<div class="container">
+			<main class="row">
+				<div class="col-xs-12" id="editor"></div>
+				<div id="side-menu">
+					<div class="menu-left" id="menu-entry">
+						<table class="table table-striped" id="entry-main">
+							<tr><td><i class="glyphicon glyphicon-folder-close"><a>dir</a></i></td></tr>
+							<tr><td><i class="glyphicon glyphicon-file">file</i></td></tr>
+						</table>
+					</div>
+					<div class="menu-left" id="menu-docker" style="display: none">
+					</div>
+					<div class="menu-right">
+						<div id="menu-controlls">
+							<div><a class="control-bg icon-entry"></a></div>
+							<div><a class="control-bg icon-docker"></a></div>
+							<div><a class="control-bg icon-git"></a></div>
+							<div><a class="control-bg icon-log"></a></div>
+						</ul>
+					</div>
 				</div>
-				<div id="menu-controlls" style="width: 10%; float: right">
-					<ul>
-						<li><a href="/entry">Entry</a></li>
-						<li>Git</li>
-						<li>Docker</li>
-						<li>Log</li>
-					</ul>
-				</div>
-			</div>
-		</main>
-
-		<footer>
-		</footer>
-		<script src="https://code.jquery.com/jquery-3.0.0.min.js"></script>
+			</main>
+		</div>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.0/ace.js"></script>
+		<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 		<script src="client.js" type="text/javascript" chatset="utf8"></script>
-		<script>
-			'use strict';
-			let e = ace.edit('editor');
-			e.getSession().setMode('ace/mode/javascript');
-		</script>
 	</body>
 </html>

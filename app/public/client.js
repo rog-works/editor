@@ -4,11 +4,13 @@ $(() => {
 	let Editor = {
 		_editor: $('div#editor'),
 		onLoad: (content) => {
-			this._editor.html(content);
+			let session = ace.edit('editor').getSession();
+			session.setMode('ace/mode/javascript');
+			session.setValue(content);
 		}
 	};
 	let Entry = {
-		_main: $('ul#entry-main'),
+		_main: $('#entry-main'),
 		_append: $('input#entry-append'),
 		_dialog: $('#entry-append-dialog'),
 		_dialogOk: $('#entry-append-dialog input#ok'),
@@ -26,30 +28,30 @@ $(() => {
 		},
 		_registAppend: () => {
 			Entry._append.on('click', (event) => {
-				Entry.onAppendBefore();
 				event.preventDefault();
+				Entry.onAppendBefore();
 			});
 			Entry._dialogOk.on('click', (event) => {
+				event.preventDefault();
 				let path = Entry._dialogPath.val();
 				Entry.onAppend(path);
-				event.preventDefault();
 			});
 			Entry._dialogCancel.on('click', (event) => {
-				Entry.onAppendCancel();
 				event.preventDefault();
+				Entry.onAppendCancel();
 			});
 		},
 		_registEntries: () => {
-			Entry._main.find('li').on('click', (event) => {
+			Entry._main.find('a').on('click', (event) => {
+				event.preventDefault();
 				let eEntry = $(event.toElement);
 				Entry.onSelected(eEntry);
-				event.preventDefault();
 			});
 		},
 		// 
 		onLoad: (entries) => {
-			let lis = Entry._toDOM(entries);
-			Entry._main.html(lis.join(''));
+			let strEntries = Entry._toDOM(entries);
+			Entry._main.html(strEntries.join(''));
 			Entry._registEntries();
 		},
 		// 
@@ -67,8 +69,8 @@ $(() => {
 			$.post('/entry', {path: path, content: ''}, (res) => {
 				Entry._registLoad();
 				let param = encodeURIComponent(res.path);
-				let entry = Entry._main.find(`li[url="/entry/${param}"]`)
-				Entry.onSelected(entry);
+				let eEntry = Entry._main.find(`a[url="/entry/${param}"]`);
+				Entry.onSelected(eEntry);
 			});
 		},
 		onAppendCancel: () => {
@@ -79,20 +81,13 @@ $(() => {
 		_toDOM: (entries) => {
 			return entries.map((self) => {
 				let param = encodeURIComponent(self.path);
-				return `<li><a url="/entry/${param}">${self.name}</a></li>`;
+				let isFile = self.type === 'file';
+				let classes = isFile ? 'file' : 'folder-close';
+				return `<tr><td><i class="glyphicon glyphicon-${classes}"><a url="/entry/${param}">${self.name}</a></i></td></tr>`;
 			});
 		}
 	};
 
 	// entry container
 	Entry.regist();
-
-	// 
-	
-	
-	// 
-	
-
-	// 
-	
 });
