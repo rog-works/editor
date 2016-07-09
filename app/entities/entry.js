@@ -12,7 +12,7 @@ const ROOT_DIRECTORY = '/opt/app/works';
 
 /** Entry entity keys */
 let keys = () => {
-	return ['path', 'type', 'content'];
+	return ['name', 'path', 'dir', 'type', 'content'];
 };
 
 /**
@@ -37,14 +37,19 @@ let entries = (relDirPath = '') => {
 /**
  * Find at entry
  * @param string relPath Entry relative path from '/opt/app/works'
- * @return Entry Entry entity
+ * @return Entry/Entry[] Return of Entry is File. or Entries is Directory
  */
 let at = (relPath) => {
 	try {
 		let realPath = _toRealPath(relPath);
-		let content = FileProvider.at(realPath);
 		let type = _getType(realPath);
-		return _toEntity(realPath, type, content);
+		if (type === 'file') {
+			let content = FileProvider.at(realPath);
+			return _toEntity(realPath, type, content);
+		} else {
+			// XXX
+			return entries(relPath);
+		}
 	} catch (error) {
 		console.log(error);
 		return null;
@@ -88,15 +93,15 @@ let update = (relPath, content) => {
  * Rename by path to
  * @param string relPath Entry relative path from '/opt/app/works'
  * @param string relToPath Entry to relative path
- * @return boolean Rename action result
+ * @return string/null Rename path or null
  */
 let rename = (relPath, relToPath) => {
 	try {
 		FileProvider.rename(_toRealPath(relPath), _toRealPath(relToPath));
-		return true;
+		return relToPath;
 	} catch (error) {
 		console.log(error);
-		return false;
+		return null;
 	}
 };
 
@@ -151,9 +156,11 @@ let _toRelativePath = (realPath) => {
  * @return Entry Entry entity
  */
 let _toEntity = (realPath, type, content) => {
+	let relPath = _toRelativePath(realPath);
 	return {
 		name: Path.basename(realPath),
-		path: _toRelativePath(realPath),
+		path: relPath,
+		dir: Path.dirname(relPath),
 		type: type,
 		content: content
 	};

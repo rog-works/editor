@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<DOCTYPE html>
 <html lang="ja">
 	<head>
 		<title>Editor</title>
@@ -6,32 +6,74 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
 		<style type="text/css">
-			#editor {
+			/* content */
+			#content {
+				widtg: 100%;
 				height: 480px;
-			}
-			#side-menu {
-				position: fixed;
-				right: 0;
-				width: 240px;
-			}
-			.menu-left {
-				float: left;
-				width: 208px;
-				height: 480px;
-				background-color: whitesmoke;
-			}
-			.menu-right {
-				float: right;
-				width: 32px;
-			}
-			#entry-main td {
+				margin: 0;
 				padding: 0;
 			}
+			#content > .row {
+				width: 100%;
+				height: 100%;
+				margin: 0;
+				padding: 0;
+			}
+			#editor {
+				width: 100%;
+				height: 100%;
+				margin: 0;
+				padding: 0;
+			}
+			#editor-save-xs {
+				position: fixed;
+				top: 32px;
+				right: 0;
+				width: 32px;
+				height: 32px;
+				z-index: 1000;
+			}
+			/* menu-xs */
+			#menu-xs {
+				width: 100%;
+				height: 480px;
+				top: 0;
+				left: 0;
+				background-color: white;
+			}
+			#menu-xs-open {
+				position: fixed;
+				top: 0;
+				right: 0;
+				width: 32px;
+				height: 32px;
+				z-index: 1000;
+			}
+			#menu-xs-close {
+				position: fixed;
+				top: 0;
+				right: 0;
+				width: 32px;
+				height: 32px;
+				z-index: 1000;
+			}
+			/* entry */
+			#entry-main .list-group {
+				border: 0;
+				margin: 0;
+				padding: 2px 0 2px 0;
+			}
+			#entry-main .list-group-item {
+				border: 0;
+				margin: 0;
+				padding: 2px 0 2px 10px;
+			}
+			/* icon */
 			.control-bg {
 				width: 32px;
 				height: 32px;
 				display: inline-block;
-				margin: 0 0 0 0;
+				margin: 0;
 				background-position: 0 -64px;
 				background-size: 32px 32px;
 			}
@@ -50,32 +92,48 @@
 		</style>
 	</head>
 	<body>
-		<div class="container">
-			<main class="row">
-				<div class="col-xs-12" id="editor"></div>
-				<div id="side-menu">
-					<div class="menu-left" id="menu-entry">
-						<table class="table table-striped" id="entry-main">
-							<tr><td><i class="glyphicon glyphicon-folder-close"><a>dir</a></i></td></tr>
-							<tr><td><i class="glyphicon glyphicon-file">file</i></td></tr>
-						</table>
-					</div>
-					<div class="menu-left" id="menu-docker" style="display: none">
-					</div>
-					<div class="menu-right">
-						<div id="menu-controlls">
-							<div><a class="control-bg icon-entry"></a></div>
-							<div><a class="control-bg icon-docker"></a></div>
-							<div><a class="control-bg icon-git"></a></div>
-							<div><a class="control-bg icon-log"></a></div>
+		<div class="container-fluid" id="content">
+			<div class="row">
+				<div class="col-sm-8 col-xs-12" id="editor"></div>
+			</div>
+		</div>
+		<button class="btn btn-primary glyphicon glyphicon-th-list" data-toggle="modal" data-target="#menu-xs" id="menu-xs-open"></button>
+		<button class="btn btn-success glyphicon glyphicon-floppy-save" id="editor-save-xs" data-bind="click: $data.entry.update"></button>
+		<div class="modal" id="menu-xs" style="display: none;">
+			<div class="col-xs-12">
+				<ul class="nav nav-tabs" id="menu-controlls">
+					<li><a class="control-bg icon-entry" data-toggle="tab" href="#menu-entry"></a></li>
+					<li><a class="control-bg icon-docker" data-toggle="tab" href="#menu-docker"></a></li>
+					<li><a class="control-bg icon-git"></a></li>
+					<li><a class="control-bg icon-log"></a></li>
+				</ul>
+				<div class="tab-content">
+					<div class="tab-pane active" id="menu-entry">
+						<ul class="list-group" id="entry-main" data-bind="foreach: entries">
+							<li class="list-group-item" data-bind="attr: $data.attr">
+								<i class="glyphicon" data-bind="css: $data.class">
+									<a data-bind="text: $data.path, click: $data.click"></a>
+								</i>
+								<div style="float: right">
+									<span>
+										<a class="glyphicon glyphicon-pencil" style="float: left" data-bind="click: $data.rename"></a>
+										<a class="glyphicon glyphicon-trash" style="float: right" data-bind="click: $data.delete"></a>
+									</span>
+								</div>
+							</li>
 						</ul>
 					</div>
+					<div class="tab-pane" id="menu-docker">
+						docker
+					</div>
 				</div>
-			</main>
+			</div>
+			<button class="btn btn-primary glyphicon glyphicon-remove-circle" data-toggle="modal" data-target="#menu-xs" id="menu-xs-close"></button>
 		</div>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.0/ace.js"></script>
 		<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/knockout/2.3.0/knockout-min.js"></script>
 		<script src="client.js" type="text/javascript" chatset="utf8"></script>
 	</body>
 </html>

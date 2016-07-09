@@ -12,8 +12,12 @@ let glob = require('glob');
  * @throws no such file or directory
  */
 let entries = (directory, nameOnly = true) => {
-	let entries = glob.sync(directory + '/*', {nosort: true});
-	entries.sort(_sort);
+	let options = {
+		ignore: ['**/node_modules/**']
+		// nosort: true
+	};
+	let entries = glob.sync(directory + '/**', options);
+	// entries.sort(_sort);
 	if (nameOnly) {
 		return entries.map((self) => {
 			return self.substr(directory.length);

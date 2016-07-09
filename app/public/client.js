@@ -1,93 +1,186 @@
 'use strict';
-
 $(() => {
-	let Editor = {
-		_editor: $('div#editor'),
-		onLoad: (content) => {
-			let session = ace.edit('editor').getSession();
-			session.setMode('ace/mode/javascript');
-			session.setValue(content);
-		}
-	};
-	let Entry = {
-		_main: $('#entry-main'),
-		_append: $('input#entry-append'),
-		_dialog: $('#entry-append-dialog'),
-		_dialogOk: $('#entry-append-dialog input#ok'),
-		_dialogCancel: $('#entry-append-dialog input#cancel'),
-		_dialogPath: $('#entry-append-dialog input#path'),
-		// 
-		regist: () => {
-			Entry._registLoad();
-			Entry._registAppend();
-		},
-		_registLoad: () => {
-			$.get('/entry', (res) => {
-				Entry.onLoad(res);
-			});
-		},
-		_registAppend: () => {
-			Entry._append.on('click', (event) => {
-				event.preventDefault();
-				Entry.onAppendBefore();
-			});
-			Entry._dialogOk.on('click', (event) => {
-				event.preventDefault();
-				let path = Entry._dialogPath.val();
-				Entry.onAppend(path);
-			});
-			Entry._dialogCancel.on('click', (event) => {
-				event.preventDefault();
-				Entry.onAppendCancel();
-			});
-		},
-		_registEntries: () => {
-			Entry._main.find('a').on('click', (event) => {
-				event.preventDefault();
-				let eEntry = $(event.toElement);
-				Entry.onSelected(eEntry);
-			});
-		},
-		// 
-		onLoad: (entries) => {
-			let strEntries = Entry._toDOM(entries);
-			Entry._main.html(strEntries.join(''));
-			Entry._registEntries();
-		},
-		// 
-		onSelected: (eEntry) => {
-			$.get(eEntry.attr('url'), (res) => {
-				Editor.onLoad(res.content);
-				Entry._main.find('li').removeClass('on');
-				eEntry.addClass('on');
-			});
-		},
-		onAppendBefore: () => {
-			Entry._dialog.show();
-		},
-		onAppend: (path) => {
-			$.post('/entry', {path: path, content: ''}, (res) => {
-				Entry._registLoad();
-				let param = encodeURIComponent(res.path);
-				let eEntry = Entry._main.find(`a[url="/entry/${param}"]`);
-				Entry.onSelected(eEntry);
-			});
-		},
-		onAppendCancel: () => {
-			Entry._dialog.hide();
-			Entry._dialogPath.val('');
-		},
-		// 
-		_toDOM: (entries) => {
-			return entries.map((self) => {
-				let param = encodeURIComponent(self.path);
-				let isFile = self.type === 'file';
-				let classes = isFile ? 'file' : 'folder-close';
-				return `<tr><td><i class="glyphicon glyphicon-${classes}"><a url="/entry/${param}">${self.name}</a></i></td></tr>`;
-			});
-		}
-	};
 
-	// entry container
-	Entry.regist();
+	// knockoutjs
+	class Editor {
+		static _get () {
+		}
+
+		static _session () {
+			return ace.edit('editor').getSession();
+		}
+
+		static init () {
+			Editor.load();
+		}
+
+		static load (entry = null) {
+			let self = Editor._get();
+			self.path(entry.path);
+			let session = Editor._session();
+			let content = entry !== null ? entry.content : '';
+			session.setValue(entry.content);
+			session.setMode('ace/mode/javascript');
+
+			if (entry !== null) {
+				let model = {
+					save: entry.update
+				};
+				ko.applyBindings(model, document.getElementById('editor-save-xs'));
+			}
+		}
+
+		save () {
+			Entry.update(this.path, this.content());
+		}
+
+		content () {
+			return Editor._session().getValue();
+		}
+	}
+
+	class Entry {
+		constructor (entity) {
+			$.extend(this, entity);
+			this.attr = {
+				dir: entity.dir
+			}
+			this.path = ko.observable(this.path);
+			this.class = ko.observable(Entry.toClass(this.type));
+		}
+
+		static update (path, content) {
+			let url = '/entry/' + encodeURIComponent(path);
+			$.ajax({
+				url: url,
+				type: 'PUT',
+				dataType: 'json',
+				data: {content: content},
+				success: (entity) => {
+					console.log(entity);
+				}
+			});
+		}
+
+		rename () {
+			let to = window.prompt('change file path', this.path());
+			if (to === null || this.path() === to) {
+				console.log('not changed');
+				return;
+			}
+			if (/[^\d\w\-\/_.]+/.test(to)) {
+				console.log('invalid file path');
+				return;
+			}
+			let encodePath = encodeURIComponent(this.path());
+			let encodeParam = $.param({to: to});
+			let url = `/entry/${encodePath}/rename?${encodeParam}`;
+			$.ajax({
+				url: url,
+				type: 'PUT',
+				dataType: 'json',
+				success: (toPath) => {
+					this.path(toPath);
+				}
+			});
+		}
+
+		delete () {
+			let url = '/entry/' + encodeURIComponent(this.path());
+			$.ajax({
+				url: url,
+				type: 'DELETE',
+				dataType: 'json',
+				success: (deleted) => {
+					console.log(deleted);
+				}
+			});
+		}
+
+		static init () {
+			EntryDirectory.load();
+		}
+
+		static toModel (entities) {
+			return {
+				entries: entities.map((self) => {
+					if (self.type === 'file') {
+						return new EntryFile(self);
+					} else {
+						return new EntryDirectory(self);
+					}
+				})
+			};
+		}
+
+		static toClass (type) {
+			const classes = {
+				file: 'glyphicon-file',
+				directory: 'glyphicon-folder-open',
+				directoryClose:  'glyphicon-folder-close'
+			};
+			return classes[type];
+		}
+	}
+
+	class EntryEmpty {
+		constructor () {
+			this.name = '';
+			this.content = '';
+		}
+		create () {}
+		update () {}
+		rename () {}
+		delete () {}
+		click () {}
+	}
+
+	class EntryFile extends Entry {
+		constructor (entity) {
+			super(entity);
+		}
+
+		static load (path = '/') {
+			let url = '/entry/' + encodeURIComponent(path);
+			$.get(url, (entity) => {
+				let entry = new EntryFile(entity);
+				Editor.load(entry);
+			});
+		}
+
+		click () {
+			EntryFile.load(this.path());
+		}
+	}
+
+	class EntryDirectory extends Entry {
+		constructor (entity) {
+			super(entity);
+			this.opened = true;
+		}
+
+		static load (path = '/') {
+			let param = $.param({dir: path});
+			let url = `/entry?${param}`;
+			$.get(url, (entities) => {
+				let model = Entry.toModel(entities);
+				ko.applyBindings(model, document.getElementById('entry-main'));
+			});
+		}
+
+		static toggle (dir) {
+			// XXX
+			$(`#entry-main li[dir="${dir}"]`).toggleClass('hide');
+		}
+
+		click () {
+			this.opened = !this.opened;
+			let toggleClass = Entry.toClass(this.opened ? 'directory' : 'directoryClose');
+			this.class(toggleClass);
+			EntryDirectory.toggle(this.path());
+		}
+	}
+
+	Editor.init();
+	Entry.init();
 });
