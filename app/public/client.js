@@ -27,7 +27,9 @@ $(() => {
 		}
 
 		save () {
-			Entry.update(this.path(), this.content());
+			if (Entry.validSavePath(this.path())) {
+				Entry.update(this.path(), this.content());
+			}
 		}
 
 		content () {
@@ -44,10 +46,10 @@ $(() => {
 			this.path = ko.observable(entity.path);
 			this.class = ko.observable(Entry.toClass(this.type));
 			this.selected = ko.observable('');
+			this.edited = 'isTrue';
 			this.attr = {
-				dir: entity.dir,
-				edited: true
-			}
+				dir: entity.dir
+			};;
 		}
 
 		static update (path, content) {
@@ -72,7 +74,7 @@ $(() => {
 
 		rename () {
 			let to = window.prompt('change file path', this.path());
-			if (!Entry.validPath(to)) {
+			if (!Entry.validSavePath(to)) {
 				return;
 			}
 			let encodePath = encodeURIComponent(this.path());
@@ -130,17 +132,18 @@ $(() => {
 			});
 		}
 
-		static validPath (path) {
-			if (path === null) {
+		static validSavePath (path) {
+			if (typeof path !== "string" || path.length === 0) {
+				console.log('invalid argument');
 				return false;
 			}
 			if (/[^\d\w\-\/_.]+/.test(path)) {
-				console.log('invalid file path');
+				console.log('not allowed path characters');
 				return false;
 			}
 			for (let entry of app.entry.entries()) {
 				if (entry.path() === path) {
-					console.log('already file path');
+					console.log('already file exists');
 					return false;
 				}
 			}
@@ -186,15 +189,14 @@ $(() => {
 				path: '- create file -',
 				dir: ''
 			});
-			this.attr.edited = false;
+			this.edited = 'isFalse';
 		}
 
 		click () {
 			let path = window.prompt('input create file path', '/');
-			if (!Entry.validPath(path)) {
-				return;
+			if (Entry.validSavePath(path)) {
+				Entry.create(path);
 			}
-			Entry.create(path);
 		}
 	}
 
