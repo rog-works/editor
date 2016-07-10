@@ -35,7 +35,7 @@ $(() => {
 		}
 
 		content () {
-			return this._session().getValue();
+			return this._editor().getSession().getValue();
 		}
 	}
 
