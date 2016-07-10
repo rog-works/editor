@@ -1,52 +1,53 @@
 'use strict';
 $(() => {
 
-	// knockoutjs
+	// Editor model
 	class Editor {
-		static _get () {
-		}
-
-		static _session () {
-			return ace.edit('editor').getSession();
+		constructor () {
+			this.path = null;
 		}
 
 		static init () {
-			Editor.load();
+			let self = new Editor();
+			self.path = ko.observable('#');
+			ko.applyBindings(self, document.getElementById('editor-save-xs'));
+			self.load();
+			return self;
 		}
 
-		static load (entry = null) {
-			let self = Editor._get();
-			self.path(entry.path);
-			let session = Editor._session();
-			let content = entry !== null ? entry.content : '';
-			session.setValue(entry.content);
-			session.setMode('ace/mode/javascript');
+		_session () {
+			return ace.edit('editor').getSession();
+		}
 
-			if (entry !== null) {
-				let model = {
-					save: entry.update
-				};
-				ko.applyBindings(model, document.getElementById('editor-save-xs'));
-			}
+		load (path = '#', content = '') {
+			let session = this._session();
+			session.setValue(content);
+			session.setMode('ace/mode/javascript');
+			this.path(path);
 		}
 
 		save () {
-			Entry.update(this.path, this.content());
+			Entry.update(this.path(), this.content());
 		}
 
 		content () {
-			return Editor._session().getValue();
+			return this._session().getValue();
 		}
 	}
 
 	class Entry {
-		constructor (entity) {
-			$.extend(this, entity);
-			this.attr = {
-				dir: entity.dir
-			}
-			this.path = ko.observable(this.path);
+		constructor () {
+		}
+
+		extend (entity) {
+			this.type = entity.type;
+			this.path = ko.observable(entity.path);
 			this.class = ko.observable(Entry.toClass(this.type));
+			this.selected = ko.observable('');
+			this.attr = {
+				dir: entity.dir,
+				edited: true
+			}
 		}
 
 		static update (path, content) {
@@ -62,14 +63,16 @@ $(() => {
 			});
 		}
 
+		static create (path) {
+			$.post('/entry', {path: path}, (entity) => {
+				let entry = Entry.factory(entity);
+				app.entry.entries.push(entry);
+			});
+		}
+
 		rename () {
 			let to = window.prompt('change file path', this.path());
-			if (to === null || this.path() === to) {
-				console.log('not changed');
-				return;
-			}
-			if (/[^\d\w\-\/_.]+/.test(to)) {
-				console.log('invalid file path');
+			if (!Entry.validPath(to)) {
 				return;
 			}
 			let encodePath = encodeURIComponent(this.path());
@@ -86,31 +89,76 @@ $(() => {
 		}
 
 		delete () {
-			let url = '/entry/' + encodeURIComponent(this.path());
+			let ok = confirm(`'${this.path()}' deleted?`);
+			if (!ok) {
+				console.log('delete cancel');
+				return;
+			}
+			let path = this.path();
+			let url = '/entry/' + encodeURIComponent(path);
 			$.ajax({
 				url: url,
 				type: 'DELETE',
 				dataType: 'json',
 				success: (deleted) => {
-					console.log(deleted);
+					let removed = app.entry.entries.remove((self) => {
+						return self.path() === path;
+					});
+					console.log(removed);
 				}
 			});
 		}
 
 		static init () {
-			EntryDirectory.load();
+			let self = new EntryRoot();
+			self.entries = ko.observableArray(self.entries);
+			ko.applyBindings(self, document.getElementById('entry-main'));
+			self.load();
+			return self;
 		}
 
-		static toModel (entities) {
-			return {
-				entries: entities.map((self) => {
-					if (self.type === 'file') {
-						return new EntryFile(self);
-					} else {
-						return new EntryDirectory(self);
-					}
-				})
-			};
+		load (path = '/') {
+			let param = $.param({dir: path});
+			let url = `/entry?${param}`;
+			$.get(url, (entities) => {
+				let entries = Entry.toEntries(entities);
+				app.entry.entries.removeAll();
+				for (let entry of entries) {
+					app.entry.entries.push(entry);
+				}
+				app.entry.entries.push(new EntryAdd());
+			});
+		}
+
+		static validPath (path) {
+			if (path === null) {
+				return false;
+			}
+			if (/[^\d\w\-\/_.]+/.test(path)) {
+				console.log('invalid file path');
+				return false;
+			}
+			for (let entry of app.entry.entries()) {
+				if (entry.path() === path) {
+					console.log('already file path');
+					return false;
+				}
+			}
+			return true;
+		}
+
+		static toEntries (entities) {
+			return entities.map((self) => {
+				return Entry.factory(self);
+			});
+		}
+
+		static factory(entry) {
+			if (entry.type === 'file') {
+				return new EntryFile(entry);
+			} else {
+				return new EntryDirectory(entry);
+			}
 		}
 
 		static toClass (type) {
@@ -123,52 +171,67 @@ $(() => {
 		}
 	}
 
-	class EntryEmpty {
-		constructor () {
-			this.name = '';
-			this.content = '';
+	class EntryRoot extends Entry {
+		constructor (entity) {
+			super();
+			this.entries = [];
 		}
-		create () {}
-		update () {}
-		rename () {}
-		delete () {}
-		click () {}
+	}
+
+	class EntryAdd extends Entry {
+		constructor () {
+			super();
+			super.extend({
+				type: 'directory',
+				path: '- create file -',
+				dir: ''
+			});
+			this.attr.edited = false;
+		}
+
+		click () {
+			let path = window.prompt('input create file path', '/');
+			if (!Entry.validPath(path)) {
+				return;
+			}
+			Entry.create(path);
+		}
 	}
 
 	class EntryFile extends Entry {
 		constructor (entity) {
-			super(entity);
+			super();
+			super.extend(entity);
 		}
 
-		static load (path = '/') {
+		load (path = '/') {
 			let url = '/entry/' + encodeURIComponent(path);
 			$.get(url, (entity) => {
-				let entry = new EntryFile(entity);
-				Editor.load(entry);
+				app.editor.load(entity.path, entity.content);
+				this.activate();
 			});
 		}
 
+		activate () {
+			for (let entry of app.entry.entries()) {
+				entry.selected('');
+			}
+			this.selected('active');
+		}
+
 		click () {
-			EntryFile.load(this.path());
+			this.load(this.path());
 		}
 	}
 
 	class EntryDirectory extends Entry {
 		constructor (entity) {
-			super(entity);
+			super();
+			super.extend(entity);
 			this.opened = true;
 		}
 
-		static load (path = '/') {
-			let param = $.param({dir: path});
-			let url = `/entry?${param}`;
-			$.get(url, (entities) => {
-				let model = Entry.toModel(entities);
-				ko.applyBindings(model, document.getElementById('entry-main'));
-			});
-		}
-
-		static toggle (dir) {
+		toggle (dir) {
 			// XXX
 			$(`#entry-main li[dir="${dir}"]`).toggleClass('hide');
 		}
@@ -177,10 +240,11 @@ $(() => {
 			this.opened = !this.opened;
 			let toggleClass = Entry.toClass(this.opened ? 'directory' : 'directoryClose');
 			this.class(toggleClass);
-			EntryDirectory.toggle(this.path());
+			this.toggle(this.path());
 		}
 	}
-
-	Editor.init();
-	Entry.init();
+	let app = {
+		editor: Editor.init(),
+		entry: Entry.init()
+	};
 });
