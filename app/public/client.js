@@ -252,8 +252,55 @@ $(() => {
 			this.toggle(this.path());
 		}
 	}
+
+	class Shell {
+		constructor () {
+			this.action = 'Execution';
+			this.query = '';
+			this.logs = '';
+			this.css = 'btn-success';
+		}
+
+		static init () {
+			let self = new Shell();
+			self.action = ko.observable(self.action);
+			self.query = ko.observable(self.query);
+			self.logs = ko.observable(self.logs);
+			self.css = ko.observable(self.css);
+			ko.applyBindings(self, document.getElementById('shell-main'));
+			return self;
+		}
+
+		click () {
+			this._publish();
+		}
+
+		_beforePublish () {
+			this.action('Published...');
+			this.css('btn-danger glyphicon-remove disabled');
+		}
+
+		_publish () {
+			let query = this.query();
+			this.query('');
+			this._beforePublish();
+			$.post('/shell', {query: query}, (result) => {
+				this.logs(`${this.logs()}${result.query}\n${result.output}`);
+				this._afterPublish();
+				// XXX
+				$('#shell-query').focus();
+			});
+		}
+
+		_afterPublish () {
+			this.action('Execution');
+			this.css('btn-success glyphicon-ok');
+		}
+	}
+
 	let app = {
 		editor: Editor.init(),
-		entry: Entry.init()
+		entry: Entry.init(),
+		shell: Shell.init()
 	};
 });
