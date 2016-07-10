@@ -15,15 +15,17 @@ $(() => {
 			return self;
 		}
 
-		_session () {
-			return ace.edit('editor').getSession();
+		_editor () {
+			return ace.edit('editor');
 		}
 
 		load (path = '#', content = '') {
-			let session = this._session();
+			let editor = this._editor();
+			let session = editor.getSession();
 			session.setValue(content);
 			session.setMode('ace/mode/javascript');
 			this.path(path);
+			editor.focus();
 		}
 
 		save () {
@@ -74,7 +76,7 @@ $(() => {
 
 		rename () {
 			let to = window.prompt('change file path', this.path());
-			if (!Entry.validSavePath(to)) {
+			if (!Entry.validSavePath(to) || Entry.pathExists(to)) {
 				return;
 			}
 			let encodePath = encodeURIComponent(this.path());
@@ -141,13 +143,16 @@ $(() => {
 				console.log('not allowed path characters');
 				return false;
 			}
+			return true;
+		}
+
+		static pathExists (path) {
 			for (let entry of app.entry.entries()) {
 				if (entry.path() === path) {
-					console.log('already file exists');
-					return false;
+					return true;
 				}
 			}
-			return true;
+			return false;
 		}
 
 		static toEntries (entities) {
@@ -194,7 +199,7 @@ $(() => {
 
 		click () {
 			let path = window.prompt('input create file path', '/');
-			if (Entry.validSavePath(path)) {
+			if (Entry.validSavePath(path) && !Entry.pathExists(path)) {
 				Entry.create(path);
 			}
 		}
@@ -209,6 +214,8 @@ $(() => {
 		load (path = '/') {
 			let url = '/entry/' + encodeURIComponent(path);
 			$.get(url, (entity) => {
+				// XXX auto closing to focus editor
+				$('#menu-xs-close').click();
 				app.editor.load(entity.path, entity.content);
 				this.activate();
 			});
