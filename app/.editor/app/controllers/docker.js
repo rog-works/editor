@@ -1,0 +1,15 @@
+'use strict';
+
+let Entity = require('../entities/docker');
+let Render = require('../helpers/render');
+let router = require('express').Router();
+
+router.post('/', (req, res) => {
+	console.log(`index able!! ${req.body.command}`);
+	let args = req.body.command.split(' ');
+	let command = args.shift();
+	let result = Entity.command(command, args);
+	Render.json(res, result);
+});
+
+module.exports = router;

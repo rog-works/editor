@@ -1,18 +1,11 @@
 FROM node:6.2.2-slim
 
-ENV MAIN_SCRIPT /opt/app/server.js
-ENV PORT 80
+WORKDIR /opt/app
 
-# Pre-install
-COPY opt/ /opt/
-WORKDIR /opt
-
-# Install npm
-RUN npm install --production \
- && npm cache clean \
 # Install docker
- && apt-get update \
+RUN apt-get update \
  && apt-get -y install \
+      vim \
       apt-transport-https \
       ca-certificates \
       --no-install-recommends \
@@ -25,4 +18,5 @@ RUN npm install --production \
  && curl -L https://github.com/docker/compose/releases/download/1.7.0/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose \
  && chmod +x /usr/local/bin/docker-compose
 
-CMD node ${MAIN_SCRIPT}
+# XXX Persistent
+CMD tail -f /dev/null

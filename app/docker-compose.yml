@@ -1,0 +1,14 @@
+editor-app:
+  image: editor:latest
+  privileged: true
+  volumes:
+    - /opt/app:/opt/app
+    - /usr/bin/docker:/usr/bin/docker
+    - /var/run/docker.sock:/var/run/docker.sock
+    - /usr/local/bin/docker-compose:/usr/local/bin/docker-compose
+    - /usr/lib/x86_64-linux-gnu/libapparmor.so.1:/usr/lib/x86_64-linux-gnu/libapparmor.so.1
+    - /usr/lib/x86_64-linux-gnu/libltdl.so.7:/usr/lib/x86_64-linux-gnu/libltdl.so.7
+  ports:
+    - 80:80
+  environment:
+    PORT: 80

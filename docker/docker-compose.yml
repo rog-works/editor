@@ -2,10 +2,10 @@ editor-app:
   image: localhost:49000/editor:latest
   volumes:
     - /vagrant/editor/app:/opt/app
-  ports:
-    - "18081:80"
-  environment:
-    MAIN_SCRIPT: /opt/app/server.js
-    PORT: 80
+    # FIXME failed service started...
+    # - /vagrant/editor/.docker:/var/lib/docker
   privileged: true
+  # ports: nothing XXX Using ephemeral port range. Defaults (32768 - 61000)
+  ports:
+    - 8080:80
 
