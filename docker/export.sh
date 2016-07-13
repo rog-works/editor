@@ -14,6 +14,6 @@ elif [ $# -eq 2 ] && [ "$1" == "-r" ] && [ "$2" == "docker-registry" ]; then
 	docker run -d -p 49000:5000 docker-registry:latest registry serve /etc/docker/registry/config.yml
 elif [ $# -eq 2 ] && [ "$1" == "-r" ] && [ "$2" == "editor" ]; then
 	docker run -it -v /home/ec2-user/app:/opt/app -p 80:80 --privileged localhost:49000/editor:latest bash
-elif [ $# -eq 2 ] && [ "$1" == "-export" ];
+elif [ $# -eq 2 ] && [ "$1" == "-export" ]; then
 	docker-compose exec docker export $2 | gzip - > /opt/app/$2.tgz
 fi
