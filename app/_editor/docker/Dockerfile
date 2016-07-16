@@ -6,6 +6,7 @@ WORKDIR /opt
 
 # Install npm
 RUN npm install --production \
- && npm cache clean
+ && npm cache clean \
+ && mkdir /var/log/app
 
-CMD node /opt/app/.editor/app/server.js
+CMD node /opt/app/_editor/app/server.js

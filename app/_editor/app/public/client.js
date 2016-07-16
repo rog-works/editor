@@ -242,7 +242,7 @@ $(() => {
 
 		toggle (dir) {
 			// XXX
-			$(`#entry-main li[dir="${dir}"]`).toggleClass('hide');
+			$(`#entry-main li[dir^="${dir}"]`).toggleClass('hide');
 		}
 
 		click () {
@@ -278,11 +278,11 @@ $(() => {
 		_beforePublish () {
 			this.action('Published...');
 			this.css('btn-danger glyphicon-remove disabled');
+			this.query('');
 		}
 
 		_publish () {
 			let query = this.query();
-			this.query('');
 			this._beforePublish();
 			$.post('/shell', {query: query}, (result) => {
 				this.logs(`${this.logs()}${result.query}\n${result.output}`);
