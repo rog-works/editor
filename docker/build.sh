@@ -2,59 +2,56 @@
 
 set -eux
 
-if [ $# -eq 0 ]; then
+if [ $# -le 1 ]; then
 	echo "invalid arguments. ${#}"
-	echo "# usage"
-	echo "bash build.sh [options]"
-	echo "# descriptions"
-	echo "--all: build tab push"
-	echo "-b: build"
-	echo "-t: tag"
-	echo "-p: push"
-	echo "# examples"
-	echo "bash build.sh --all"
+	echo "# Usage"
+	echo "- $ bash build.sh <image-name> [options]"
+	echo "# Descriptions"
+	echo "- --all: build tab push"
+	echo "- -b: build"
+	echo "- -t: tag"
+	echo "- -p: push"
+	echo "# Examples"
+	echo "- $ bash build.sh editor-host --all"
 	exit 1
 fi
 
-
-TARGETS=""
+image=$1
+shift
+targets=
 
 while [ $# -gt 0 ]
 do
 	case $1 in
 		"--all" )
-			TARGETS="build tag push"
+			targets="build tag push"
 		break ;;
 		"-b" )
-			TARGETS="${TARGETS} build"
+			targets="${targets} build"
 		;;
 		"-t" )
-			TARGETS="${TARGETS} tag"
+			targets="${targets} tag"
 		;;
 		"-p" )
-			TARGETS="${TARGETS} push"
+			targets="${targets} push"
 		;;
 	esac
 	shift
 done
 
+curr=$(cd $(dirname $0); pwd)
 
-CURR_DIR=$(cd $(dirname $0); pwd)
-
-REPOSITRY_NAME=$(echo $(dirname ${CURR_DIR}) | perl -nle 'print $1 if /([\w-]+)$/')
-APP=${REPOSITRY_NAME}
-
-for C in ${TARGETS}
+for C in ${targets}
 do
 	case $C in
 		"build" )
-			docker build --rm -t ${APP} ${CURR_DIR}
+			docker build --rm -t ${image} ${curr}
 		;;
 		"tag" )
-			docker tag ${APP} localhost:49000/${APP}
+			docker tag ${image} localhost:49000/${image}
 		;;
 		"push" )
-			docker push localhost:49000/${APP}
+			docker push localhost:49000/${image}
 		;;
 	esac
 done
