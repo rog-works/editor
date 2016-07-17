@@ -4,21 +4,21 @@ set -eux
 
 curr=$(cd $(dirname $0); pwd)
 
-if [ $# -ne 2 ]; then
+if [ $# -ne 1 ]; then
 	echo '# Usage'
-	echo '- $ bash registry.sh export <container-name>'
-	echo '- $ bash registry.sh import <container-name>'
-	echo '- $ bash registry.sh upload <host>'
-	echo '- $ bash registry.sh run -'
+	echo '- $ bash registry.sh export'
+	echo '- $ bash registry.sh import'
+	echo '- $ bash registry.sh upload'
+	echo '- $ bash registry.sh run'
 	exit
 fi
 
 if [ "$1" == "export" ]; then
-	docker export docker_$2-app_1 | gzip - > ${curr}/$2.tgz
+	docker export docker_docker-registry-app_1 | gzip - > ${curr}/.bin/docker-registry.tgz
 elif [ "$1" == "import" ]; then
-	cat ${curr}/$2.tgz | docker import - $2:latest
+	cat ${curr}/docker-registry.tgz | docker import - docker-registry:latest
 elif [ "$1" == "upload" ]; then
-	scp -i ~/.ssh/aws/ec2.pem ${curr}/*.tgz ec2-user@$2:~/
+	scp ${curr}/.bin/docker-registry.tgz aws:~/
 elif [ "$1" == "run" ]; then
 	docker run -d \
 		--name docker-registry \
