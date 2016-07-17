@@ -11,6 +11,8 @@ editor-app:
     - /lib64/libudev.so.0:/usr/lib/libudev.so.0
     # docker-compose for Container from host
     - /usr/local/bin/docker-compose:/usr/local/bin/docker-compose
+    # Expose application log
+    - /var/log/app
   ports:
     - 8080:80
   environment:
