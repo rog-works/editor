@@ -15,7 +15,9 @@ elif [ $# -eq 2 ] && [ "$1" == "run" ] && [ "$2" == "docker-registry" ]; then
 elif [ $# -eq 2 ] && [ "$1" == "run" ] && [ "$2" == "editor" ]; then
 	docker run -it -v /home/ec2-user/app:/opt/app -p 80:80 --privileged localhost:49000/editor:latest bash
 elif [ $# -eq 1 ] && [ "$1" == "start" ]; then
-	docker start $( docker ps -a | grep editor | awk '{ print $1 }') 
+	docker start $( docker ps -a | grep editor | awk '{ print $1 }')
+elif [ $# -eq 1 ] && [ "$1" == "attach" ]; then
+	docker attach $( docker ps -a | grep editor | awk '{ print $1 }') 
 elif [ $# -eq 1 ] && [ "$1" == "install" ]; then
 	curl -fsSL https://get.docker.com/ | sh
 	sudo service docker start

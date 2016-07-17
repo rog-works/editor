@@ -1,0 +1,8 @@
+#FROM fluent/fluentd:ubuntu-base
+FROM fluent/fluentd:v0.14.1
+
+USER root
+
+RUN apk --update --no-cache add gcc make ruby-dev
+RUN gem install fluent-plugin-websocket
+RUN gem install em-websocket

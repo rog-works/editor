@@ -2,10 +2,24 @@ editor-app:
   image: localhost:49000/editor:latest
   volumes:
     - /vagrant/editor/app:/opt/app
-    # FIXME failed service started...
-    # - /vagrant/editor/.docker:/var/lib/docker
+    # docker for Container from CentOS7 host
+    - /usr/bin/docker:/usr/bin/docker
+    - /var/run/docker.sock:/var/run/docker.sock
+    - /usr/lib64/libdevmapper.so.1.02:/usr/lib/libdevmapper.so.1.02
+    - /usr/lib64/libltdl.so.7:/usr/lib/libltdl.so.7
+    # docker-compose for Container from host
+    - /usr/local/bin/docker-compose:/usr/local/bin/docker-compose
   privileged: true
   # ports: nothing XXX Using ephemeral port range. Defaults (32768 - 61000)
   ports:
     - 8080:80
+    - 18081:18081
+    - 18082:18082
+    - 18083:18083
+    - 18084:18084
+    - 18085:18085
+    - 18086:18086
+    - 18087:18087
+    - 18088:18088
+    - 18089:18089
 

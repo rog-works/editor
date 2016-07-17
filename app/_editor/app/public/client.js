@@ -1,6 +1,33 @@
 'use strict';
 $(() => {
 
+	// WebSocket
+	class WS {
+		constructor () {
+			// this.socket = io('ws://localhost:18081');
+			this.socket = new WebSocket('ws://localhost:18081');
+			this.socket.onopen = (evt) => {
+				this.on('opened!');
+			};
+		}
+
+		static init () {
+			let self = new WS();
+			// self.socket.on('chat', (msg) => {
+			// 	self.on(msg);
+			// });
+			return self;
+		}
+
+		emit (msg) {
+			this.socket.emit('chat', msg);
+		}
+
+		on (msg) {
+			console.log(msg);
+		}
+	}
+
 	// Editor model
 	class Editor {
 		constructor () {
@@ -301,6 +328,7 @@ $(() => {
 	let app = {
 		editor: Editor.init(),
 		entry: Entry.init(),
-		shell: Shell.init()
+		shell: Shell.init(),
+		ws: WS.init()
 	};
 });

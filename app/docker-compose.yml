@@ -1,8 +1,10 @@
 editor-app:
   image: editor:latest
   privileged: true
+  storage-opt: dm.basesize=50G
   volumes:
     - /opt/app:/opt/app
+    - /var/log/app
     - /usr/bin/docker:/usr/bin/docker
     - /var/run/docker.sock:/var/run/docker.sock
     - /usr/local/bin/docker-compose:/usr/local/bin/docker-compose
@@ -12,3 +14,13 @@ editor-app:
     - 80:80
   environment:
     PORT: 80
+    MAIN_SCRIPT: /opt/app/_editor/app/server.js
+
+# log-app:
+#   image: log:latest
+#   volumes:
+#     - /opt/app/log/app/etc:/fluent/etc
+#   ports:
+#     - 18081: 8080
+#   links:
+#     - editor-app

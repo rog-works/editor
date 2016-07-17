@@ -13,9 +13,23 @@ app.use(Morgan({ stream: stream }));
 
 app.use('/', require('./controllers/index'));
 app.use('/entry', require('./controllers/entry'));
-//app.use('/git', require('./controllers/git'));
-//app.use('/docker', require('./controllers/docker'));
 app.use('/shell', require('./controllers/shell'));
 //app.use('/log', require('./controllers/log'));
 
+// let http = require('http').Server(app);
+// let io = require('socket.io')(http);
+
+// console.log('launch app');
+
+// io.on('connection', (socket) => {
+// 	console.log('connect ' + Date.now());
+// 	socket.on('chat', (msg) => {
+// 		console.log('chat ' + msg);
+// 		io.emit('chat', msg);
+// 	});
+// });
+
+// console.log('launch socket.io');
+
+// module.exports = http;
 module.exports = app;
