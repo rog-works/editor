@@ -145,7 +145,7 @@
 				<ul class="nav nav-tabs" id="menu-controlls">
 					<li><a class="glyphicon glyphicon-briefcase" data-toggle="tab" href="#menu-entry"></a></li>
 					<li><a class="glyphicon glyphicon-console" data-toggle="tab" href="#menu-docker"></a></li>
-					<li><a class="glyphicon glyphicon-dashboard"></a></li>
+					<li><a class="glyphicon glyphicon-dashboard" data-toggle="tab" href="#menu-chat"></a></li>
 				</ul>
 				<div class="tab-content">
 					<div class="tab-pane active" id="menu-entry">
@@ -172,6 +172,17 @@
 								</div>
 							</div>
 							<pre id="shell-logs" data-bind="text: $data.logs"></pre>
+						</div>
+					</div>
+					<div class="tab-pane" id="menu-chat">
+						<div id="chat-main">
+							<h5>Board:</h5>
+							<ul id="chat-msgs" data-bind="foreach: msgs">
+								<li data-bind="text: $data.msg"></li>
+							</ul>
+							<h5>Comment:</h5>
+							<input id="chat-msg" type="text" data-bind="value: msg">
+							<button type="submit" data-bind="click: emit">send</button>
 						</div>
 					</div>
 				</div>

@@ -23,6 +23,6 @@ editor-app:
 #   container_name: editor-log
 #   image: editor-log:latest
 #   volumes:
-#     - ~/editor/app/log/etc:/fluent/etc
+#     - ~/editor/app/log/app/etc:/fluent/etc
 #   links:
 #     - editor-app

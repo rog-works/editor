@@ -4,27 +4,30 @@ $(() => {
 	// WebSocket
 	class WS {
 		constructor () {
-			// this.socket = io('ws://localhost:18081');
-			this.socket = new WebSocket('ws://localhost:18081');
-			this.socket.onopen = (evt) => {
-				this.on('opened!');
-			};
+			this.socket = io();
+			this.msgs = [];
+			this.msg = '';
 		}
 
 		static init () {
 			let self = new WS();
-			// self.socket.on('chat', (msg) => {
-			// 	self.on(msg);
-			// });
+			self.msgs = ko.observableArray(self.msgs);
+			self.msg = ko.observable(self.msg);
+			self.socket.on('chat', (msg) => {
+				self.on(msg);
+			});
+			ko.applyBindings(self, document.getElementById('chat-main'));
 			return self;
 		}
 
-		emit (msg) {
-			this.socket.emit('chat', msg);
+		emit () {
+			console.log(this.msg());
+			this.socket.emit('chat', this.msg());
 		}
 
 		on (msg) {
 			console.log(msg);
+			this.msgs.push({msg: msg});
 		}
 	}
 
