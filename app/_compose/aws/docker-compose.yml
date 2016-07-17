@@ -3,18 +3,16 @@ editor-app:
   image: editor-app:latest
   privileged: true
   volumes:
-    - /home/ec2-user/editor/app:/opt/app
+    - ~/editor/app:/opt/app
     # docker for Container from CentOS7 host
     - /usr/bin/docker:/usr/bin/docker
     - /var/run/docker.sock:/var/run/docker.sock
-		- /lib64/libdevmapper.so.1.02:/usr/lib/libdevmapper.so.1.02
-		- /lib64/libudev.so.0:/usr/lib/libudev.so.0
+    - /lib64/libdevmapper.so.1.02:/usr/lib/libdevmapper.so.1.02
+    - /lib64/libudev.so.0:/usr/lib/libudev.so.0
     # docker-compose for Container from host
     - /usr/local/bin/docker-compose:/usr/local/bin/docker-compose
-    # Expose application log directory
-    # - /var/log/app
   ports:
-    - 80:80
+    - 8080:80
   environment:
     PORT: 80
     MAIN_SCRIPT: /opt/app/_editor/app/server.js

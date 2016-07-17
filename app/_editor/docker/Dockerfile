@@ -8,11 +8,11 @@ ENV MAIN_SCRIPT=/opt/app/server.js
 COPY opt/ /opt/
 WORKDIR /opt
 
-# Install npm
-RUN npm install --production \
+# Install
+RUN apt-get update \
+ && apt-get -y install vim --no-install-recommends \
+ && rm -rf /var/lib/apt/lists/* \
+ && npm install --production \
  && npm cache clean
-
-# Expose Deirectory
-VOLUME /var/log/app
 
 CMD node ${MAIN_SCRIPT}

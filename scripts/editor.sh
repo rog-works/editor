@@ -13,7 +13,7 @@ fi
 
 if [ "$1" == "run" ]; then
 	docker run -d \
-		--name editor-host \
+		--name editor-app \
 		--privileged \
 		--rm \
 		-v ~/editor/app:/opt/app \
@@ -22,8 +22,9 @@ if [ "$1" == "run" ]; then
 		-v /lib64/libdevmapper.so.1.02:/usr/lib/libdevmapper.so.1.02 \
 		-v /lib64/libudev.so.0:/usr/lib/libudev.so.0 \
 		-v /usr/local/bin/docker-compose:/usr/local/bin/docker-compose \
+		-v /var/log/app \
 		-p 80:80 \
-		localhost:49000/editor-host:latest
+		localhost:49000/editor-app:latest
 elif [ "$1" == "attach" ]; then
-	docker attach editor-host
+	docker attach editor-app
 fi
