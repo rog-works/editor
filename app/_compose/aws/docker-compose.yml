@@ -1,6 +1,6 @@
 editor-app:
   container_name: editor-app
-  image: editor-app:latest
+  image: localhost:49000/editor-app:latest
   privileged: true
   volumes:
     - ~/editor/app:/opt/app

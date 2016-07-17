@@ -22,7 +22,6 @@ elif [ "$1" == "upload" ]; then
 elif [ "$1" == "run" ]; then
 	docker run -d \
 		--name docker-registry \
-		--rm \
 		-p 49000:5000 \
 		docker-registry:latest \
 		registry serve /etc/docker/registry/config.yml
