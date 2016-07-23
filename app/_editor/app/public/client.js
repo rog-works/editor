@@ -1,39 +1,47 @@
 'use strict';
 $(() => {
 
-	// WebSocket
-	class WS {
+	// Log model
+	class Log {
 		constructor () {
 		    this.socket = null;
-			this.msgs = [];
-			this.msg = '';
+			this.logs = [];
+			// this.msg = '';
 		}
 
 		static init () {
-			let self = new WS();
+			let self = new Log();
 		    this.socket = new WebSocket('ws://localhost:18082');
 			this.socket.onmessage = (res) => {
-			    res.data.forEach((msg) => {
-			        self.on(msg);
+				let data = JSON.parse(res.data);
+			    data.forEach((msgs) => {
+			        self.on(msgs);
 			    });
 		    };
 			this.socket.onopen = () => { console.log('open'); };
 			this.socket.onclose = () => { console.log('close'); };
-			self.msgs = ko.observableArray(self.msgs);
-			self.msg = ko.observable(self.msg);
-			ko.applyBindings(self, document.getElementById('chat-main'));
+			self.width = window.screen.width;
+			self.height = window.screen.height;
+			self.logs = ko.observableArray(self.logs);
+			// self.msg = ko.observable(self.msg);
+			ko.applyBindings(self, document.getElementById('log-main'));
 			return self;
 		}
 
-		emit () {
-			console.log(this.msg());
-			//this.socket.emit('chat', this.msg());
-			this.socket.send(this.msg());
+		// emit () {
+		// 	console.log(this.msg());
+		// 	this.socket.send(this.msg());
+		// }
+
+		clear () {
+			this.logs([]);
 		}
 
-		on (msg) {
-			console.log(msg);
-			this.msgs.push({msg: msg});
+		on (msgs) {
+			console.log(msgs);
+			for (let key in msgs) {
+				this.logs.push({log: msgs[key]});
+			}
 		}
 	}
 
@@ -54,12 +62,30 @@ $(() => {
 		_editor () {
 			return ace.edit('editor');
 		}
+		
+		_toMode (ext) {
+		    let map = {
+		        sh: 'sh',
+		        py: 'python',
+		        php: 'php',
+		        css: 'css',
+		        html: 'html',
+		        json: 'json',
+		        js: 'javascript',
+		        rb: 'ruby',
+		        yml: 'yaml',
+		        yaml: 'yaml'
+	        };
+	        return (ext in map) ? `ace/mode/${map[ext]}` : 'ace/mode/javascript';
+		}
 
 		load (path = '#', content = '') {
 			let editor = this._editor();
 			let session = editor.getSession();
+			let ext = path.substr(path.lastIndexOf('.') + 1);
+			let mode = this._toMode(ext);
 			session.setValue(content);
-			session.setMode('ace/mode/javascript');
+			session.setMode(mode);
 			this.path(path);
 			editor.focus();
 		}
@@ -338,6 +364,6 @@ $(() => {
 		editor: Editor.init(),
 		entry: Entry.init(),
 		shell: Shell.init(),
-		ws: WS.init()
+		ws: Log.init()
 	};
 });

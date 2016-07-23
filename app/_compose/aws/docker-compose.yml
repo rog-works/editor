@@ -3,8 +3,6 @@ editor-app:
   image: localhost:49000/editor-app:latest
   privileged: true
   volumes:
-    - ~/editor/app:/opt/app
-    - /usr/bin/git:/usr/bin/git
     # docker for Container from CentOS7 host
     - /usr/bin/docker:/usr/bin/docker
     - /var/run/docker.sock:/var/run/docker.sock
@@ -14,19 +12,19 @@ editor-app:
     - /usr/local/bin/docker-compose:/usr/local/bin/docker-compose
     # Expose application log
     - /var/log/app
+    # application-root
+    - ~/editor/app:/opt/app
   ports:
     - 8080:80
   environment:
+    ENV: aws
     PORT: 80
     MAIN_SCRIPT: /opt/app/_editor/app/server.js
 
 editor-log:
   container_name: editor-log
-  image: editor-log:latest
-  volumes:
-    - ~/editor/app/log/app/etc/fluent.conf:/fluent/etc/fluent.conf
+  image: localhost:49000/editor-log:latest
   ports:
     - 18082:8080
-#  links:
-#    - editor-app
-#    - editor-ws
+  volumes_from:
+    - editor-app

@@ -5,10 +5,10 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
-		<style type="text/css">
+		<style charset="utf8" type="text/css">
 			/* content */
 			#content {
-				widtg: 100%;
+				width: 100%;
 				height: 480px;
 				margin: 0;
 				padding: 0;
@@ -110,33 +110,30 @@
 				text-align: center;
 			}
 			#shell-exec-button {
-			    float: left;
-			    margin: 0 auto;
+				float: left;
+				margin: 0 auto;
 			}
 			#shell-clear-button {
-			    float: right;
-			    margin: 0 auto;
+				float: right;
+				margin: 0 auto;
 			}
-			/* icon */
-			.control-bg {
-				width: 32px;
-				height: 32px;
-				display: inline-block;
+			/* log */
+			#log-main {
+				width: 100%;
+				height: 448px;
+			}
+			#log-container {
+				width: 100%;
 				margin: 0;
-				background-position: 0 -64px;
-				background-size: 32px 32px;
+				padding: 0;
 			}
-			.icon-entry {
-				background-image: url('https://cdn3.iconfinder.com/data/icons/document-icons-7/512/BT_folder_file_open-128.png');
+			#log-line {
+				margin: 0;
+				padding: 0;
 			}
-			.icon-git {
-				background-image: url('https://cdn0.iconfinder.com/data/icons/octicons/1024/mark-github-128.png');
-			}
-			.icon-docker {
-				background-image: url('https://maxcdn.icons8.com/wp-content/uploads/2016/03/docker.png');
-			}
-			.icon-log {
-				background-image: url('https://cdn2.iconfinder.com/data/icons/windows-8-metro-style/128/login.png');
+			#log-clear-button {
+				float: right;
+				margin: 0 auto;
 			}
 		</style>
 	</head>
@@ -153,7 +150,7 @@
 				<ul class="nav nav-tabs" id="menu-controlls">
 					<li><a class="glyphicon glyphicon-briefcase" data-toggle="tab" href="#menu-entry"></a></li>
 					<li><a class="glyphicon glyphicon-console" data-toggle="tab" href="#menu-docker"></a></li>
-					<li><a class="glyphicon glyphicon-dashboard" data-toggle="tab" href="#menu-chat"></a></li>
+					<li><a class="glyphicon glyphicon-dashboard" data-toggle="tab" href="#menu-log"></a></li>
 				</ul>
 				<div class="tab-content">
 					<div class="tab-pane active" id="menu-entry">
@@ -183,15 +180,14 @@
 							<pre id="shell-logs" data-bind="text: $data.logs"></pre>
 						</div>
 					</div>
-					<div class="tab-pane" id="menu-chat">
-						<div id="chat-main">
-							<h5>Board:</h5>
-							<ul id="chat-msgs" data-bind="foreach: msgs">
-								<li data-bind="text: $data.msg"></li>
-							</ul>
-							<h5>Comment:</h5>
-							<input id="chat-msg" type="text" data-bind="value: msg">
-							<button type="submit" data-bind="click: emit">send</button>
+					<div class="tab-pane" id="menu-log">
+						<div id="log-main">
+							<div id="width" data-bind="text: width"></div>
+							<div id="height" data-bind="text: height"></div>
+							<button class="btn btn-primary glyphicon glyphicon-trash" id="log-clear-button" data-bind="click: clear"></button>
+							<div id="log-container" data-bind="foreach: logs">
+								<pre class="log-line" data-bind="text: $data.log"></pre>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -202,7 +198,7 @@
 		<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 		<script src="http://cdnjs.cloudflare.com/ajax/libs/knockout/2.3.0/knockout-min.js"></script>
-		<script src=https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
 		<script src="client.js" type="text/javascript" chatset="utf8"></script>
 	</body>
 </html>

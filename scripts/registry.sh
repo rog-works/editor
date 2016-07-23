@@ -14,7 +14,7 @@ if [ $# -ne 1 ]; then
 fi
 
 if [ "$1" == "export" ]; then
-	docker export docker_docker-registry-app_1 | gzip - > ${curr}/.bin/docker-registry.tgz
+	docker export docker_docker-registry-app_1 | gzip - > ${curr}/docker-registry.tgz
 elif [ "$1" == "import" ]; then
 	cat ${curr}/docker-registry.tgz | docker import - docker-registry:latest
 elif [ "$1" == "upload" ]; then

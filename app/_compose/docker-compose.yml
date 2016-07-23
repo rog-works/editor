@@ -3,26 +3,34 @@ editor-app:
   image: localhost:49000/editor-app:latest
   privileged: true
   volumes:
-    - ~/editor/app:/opt/app
-    # docker for Container from CentOS7 host
+    # docker for Container from Ubuntu 14.04 host
     - /usr/bin/docker:/usr/bin/docker
     - /var/run/docker.sock:/var/run/docker.sock
-    - /usr/lib64/libdevmapper.so.1.02:/usr/lib/libdevmapper.so.1.02
-    - /usr/lib64/libltdl.so.7:/usr/lib/libltdl.so.7
+    - /usr/lib/x86_64-linux-gnu/libapparmor.so.1:/usr/lib/x86_64-linux-gnu/libapparmor.so.1
+    - /usr/lib/x86_64-linux-gnu/libltdl.so.7:/usr/lib/x86_64-linux-gnu/libltdl.so.7
+    - /lib/x86_64-linux-gnu/libsystemd-journal.so.0:/lib/x86_64-linux-gnu/libsystemd-journal.so.0
+    - /lib/x86_64-linux-gnu/libcgmanager.so.0:/lib/x86_64-linux-gnu/libcgmanager.so.0
+    - /lib/x86_64-linux-gnu/libnih.so.1:/lib/x86_64-linux-gnu/libnih.so.1
+    - /lib/x86_64-linux-gnu/libnih-dbus.so.1:/lib/x86_64-linux-gnu/libnih-dbus.so.1
+    - /lib/x86_64-linux-gnu/libdbus-1.so.3:/lib/x86_64-linux-gnu/libdbus-1.so.3
+    - /lib/x86_64-linux-gnu/libgcrypt.so.11:/lib/x86_64-linux-gnu/libgcrypt.so.11
     # docker-compose for Container from host
     - /usr/local/bin/docker-compose:/usr/local/bin/docker-compose
     # Expose application log
     - /var/log/app
+    # application-root
+    - /vagrant/editor/app:/opt/app
   ports:
     - 8080:80
   environment:
+    ENV: local
     PORT: 80
     MAIN_SCRIPT: /opt/app/_editor/app/server.js
 
-# editor-log:
-#   container_name: editor-log
-#   image: editor-log:latest
-#   volumes:
-#     - ~/editor/app/log/app/etc:/fluent/etc
-#   links:
-#     - editor-app
+editor-log:
+  container_name: editor-log
+  image: localhost:49000/editor-log:latest
+  ports:
+    - 18082:8080
+  volumes_from:
+    - editor-app
