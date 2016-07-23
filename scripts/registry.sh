@@ -14,11 +14,11 @@ if [ $# -ne 1 ]; then
 fi
 
 if [ "$1" == "export" ]; then
-	docker export docker_docker-registry-app_1 | gzip - > ${curr}/docker-registry.tgz
+	docker export docker-registry | gzip - > ${curr}/docker-registry.tgz
 elif [ "$1" == "import" ]; then
 	cat ${curr}/docker-registry.tgz | docker import - docker-registry:latest
 elif [ "$1" == "upload" ]; then
-	scp ${curr}/.bin/docker-registry.tgz aws:~/
+	scp ${curr}/docker-registry.tgz aws:~/
 elif [ "$1" == "run" ]; then
 	docker run -d \
 		--name docker-registry \
