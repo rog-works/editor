@@ -4,6 +4,7 @@ editor-app:
   privileged: true
   volumes:
     - ~/editor/app:/opt/app
+    - /usr/bin/git:/usr/bin/git
     # docker for Container from CentOS7 host
     - /usr/bin/docker:/usr/bin/docker
     - /var/run/docker.sock:/var/run/docker.sock
@@ -19,10 +20,13 @@ editor-app:
     PORT: 80
     MAIN_SCRIPT: /opt/app/_editor/app/server.js
 
-# editor-log:
-#   container_name: editor-log
-#   image: editor-log:latest
-#   volumes:
-#     - ~/editor/app/log/app/etc:/fluent/etc
-#   links:
-#     - editor-app
+editor-log:
+  container_name: editor-log
+  image: editor-log:latest
+  volumes:
+    - ~/editor/app/log/app/etc/fluent.conf:/fluent/etc/fluent.conf
+  ports:
+    - 18082:8080
+#  links:
+#    - editor-app
+#    - editor-ws

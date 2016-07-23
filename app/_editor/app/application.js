@@ -15,7 +15,7 @@ app.use('/', require('./controllers/index'));
 app.use('/entry', require('./controllers/entry'));
 app.use('/shell', require('./controllers/shell'));
 // app.use('/log', require('./controllers/log'));
-
+/*
 let http = require('http').Server(app);
 let io = require('socket.io')(http);
 
@@ -31,5 +31,5 @@ io.on('connection', (socket) => {
 
 console.log('launch socket.io');
 
-module.exports = http;
-// module.exports = app;
+module.exports = http;*/
+module.exports = app;

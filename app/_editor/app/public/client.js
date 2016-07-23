@@ -4,25 +4,31 @@ $(() => {
 	// WebSocket
 	class WS {
 		constructor () {
-			this.socket = io();
+		    this.socket = null;
 			this.msgs = [];
 			this.msg = '';
 		}
 
 		static init () {
 			let self = new WS();
+		    this.socket = new WebSocket('ws://localhost:18082');
+			this.socket.onmessage = (res) => {
+			    res.data.forEach((msg) => {
+			        self.on(msg);
+			    });
+		    };
+			this.socket.onopen = () => { console.log('open'); };
+			this.socket.onclose = () => { console.log('close'); };
 			self.msgs = ko.observableArray(self.msgs);
 			self.msg = ko.observable(self.msg);
-			self.socket.on('chat', (msg) => {
-				self.on(msg);
-			});
 			ko.applyBindings(self, document.getElementById('chat-main'));
 			return self;
 		}
 
 		emit () {
 			console.log(this.msg());
-			this.socket.emit('chat', this.msg());
+			//this.socket.emit('chat', this.msg());
+			this.socket.send(this.msg());
 		}
 
 		on (msg) {
@@ -285,15 +291,13 @@ $(() => {
 
 	class Shell {
 		constructor () {
-			this.action = 'Execution';
 			this.query = '';
 			this.logs = '';
-			this.css = 'btn-success';
+			this.css = 'btn-success glyphicon-play';
 		}
 
 		static init () {
 			let self = new Shell();
-			self.action = ko.observable(self.action);
 			self.query = ko.observable(self.query);
 			self.logs = ko.observable(self.logs);
 			self.css = ko.observable(self.css);
@@ -305,8 +309,11 @@ $(() => {
 			this._publish();
 		}
 
+        clear () {
+            this.logs('');
+        }
+
 		_beforePublish () {
-			this.action('Published...');
 			this.css('btn-danger glyphicon-remove disabled');
 			this.query('');
 		}
@@ -323,8 +330,7 @@ $(() => {
 		}
 
 		_afterPublish () {
-			this.action('Execution');
-			this.css('btn-success glyphicon-ok');
+			this.css('btn-success glyphicon-play');
 		}
 	}
 
