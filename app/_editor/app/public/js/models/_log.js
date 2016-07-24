@@ -5,7 +5,7 @@ class _Log {
 	}
 
 	clear () {
-		this.logs([]);
+		this.logs.removeAll();
 	}
 
 	on (log) {
