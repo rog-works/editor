@@ -1,9 +1,128 @@
+/* editor styles */
+#content {
+	width: 100%;
+	height: 360px;
+	margin: 0;
+	padding: 0;
+}
+#content > .row {
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+}
+
+/* editor styles */
+#editor {
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+}
+#editor-save-xs {
+	position: fixed;
+	top: 32px;
+	right: 0;
+	margin: 0;
+	padding: 0;
+	width: 32px;
+	height: 32px;
+	z-index: 1000;
+}
+
+/* menu-styles */
+#menu-xs {
+	width: 100%;
+	height: 360px;
+	top: 0;
+	left: 0;
+	background-color: white;
+}
+#menu-xs-open {
+	position: fixed;
+	top: 0;
+	right: 0;
+	margin: 0;
+	padding: 0;
+	width: 32px;
+	height: 32px;
+	z-index: 1000;
+}
+#menu-xs-close {
+	position: fixed;
+	top: 0;
+	right: 0;
+	margin: 0;
+	padding: 0;
+	width: 32px;
+	height: 32px;
+	z-index: 1000;
+}
+
+/* entry styles */
+#entry-main .list-group {
+	border: 0;
+	margin: 0;
+	padding: 2px 0 2px 0;
+}
+#entry-main .list-group-item {
+	border: 0;
+	margin: 0;
+	padding: 2px 0 2px 10px;
+}
+#entry-main .list-group-item.active a {
+	color: white;
+}
+.entry-control {
+	float: right;
+}
+
+/* shell styles */
+#shell-main {
+	width: 100%;
+	height: 100%;
+}
+#shell-command {
+	width: 100%;
+	color: #ccc;
+	background-color: black;
+	padding: 0;
+	margin: 0;
+	border-bottom: solid 1px #444;
+}
+#shell-prompt {
+	color: #444;
+}
+#shell-query {
+	width: 90%;
+}
+#shell-query:focus {
+	outline: none;
+}
+#shell-log-clear {
+	width: 32px;
+	text-align: center;
+	float: right;
+	background-color: #444;
+	border: transparent;
+	border-radius: 4px;
+}
+
 /* log styles */
-/*#log-container {
+#log-main {
+	width: 100%;
+	height: 100%;
+}
+#log-container {
 	background-color: black;
 	width: 100%;
-	height: 640px;
-}*/
+	height: 100%;
+	margin: 0;
+	padding: 0;
+}
+#log-clear {
+	float: right;
+}
 .log-line {
 	color: #ccc;
 	padding: 4px;

@@ -46,14 +46,15 @@
 				border-radius: 4px;
 			}
 			#shell-query {
-				width: 90%;
+				width: 100%;
 			}
 		</style>
 	</head>
 	<body>
 		<div id="shell-command">
-			<span id="shell-prompt">$</span>
-			<input id="shell-query" type="text" placeholder="input command" autocomplete="on" list="history">
+			<span id="shell-prompt">$
+				<input id="shell-query" type="text" placeholder="input command" autocomplete="on" list="history">
+			</span>
 			<button id="shell-reqult-clear">x</button>
 			<datalist id="history"></datalist>
 		</div>
