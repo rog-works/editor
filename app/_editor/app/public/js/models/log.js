@@ -1,14 +1,13 @@
 'use strict';
-class Log {
+class Log extends _Log {
 	constructor () {
+		super();
 		this.socket = null;
-		this.logs = [];
-		// this.msg = '';
 	}
 
-	static init () {
+	static init (wsUri = 'ws://localhost:18082', id = 'log-main') {
 		let self = new Log();
-		this.socket = new WebSocket('ws://localhost:18082');
+		this.socket = new WebSocket(wsUri);
 		this.socket.onmessage = (res) => {
 			let data = JSON.parse(res.data);
 			data.forEach((msgs) => {
@@ -17,16 +16,9 @@ class Log {
 		};
 		this.socket.onopen = () => { console.log('open'); };
 		this.socket.onclose = () => { console.log('close'); };
-		self.logs = ko.observableArray(self.logs);
-		// self.msg = ko.observable(self.msg);
-		ko.applyBindings(self, document.getElementById('log-main'));
+		ko.applyBindings(self, document.getElementById(id));
 		return self;
 	}
-
-	// emit () {
-	// 	console.log(this.msg());
-	// 	this.socket.send(this.msg());
-	// }
 
 	clear () {
 		this.logs([]);
@@ -35,7 +27,8 @@ class Log {
 	on (msgs) {
 		console.log(msgs);
 		for (let key in msgs) {
-			this.logs.push({log: msgs[key]});
+			super.on(msgs[key]);
 		}
 	}
 }
+

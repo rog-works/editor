@@ -8,6 +8,7 @@ $(() => {
 		log: Log.init()
 	});
 	let onRotate = () => {
+		// XXX Diviated with the software keyboard is Displayed
 	    let h = window.innerHeight;
 	    let ids = [
 	        '#content',
@@ -19,6 +20,6 @@ $(() => {
 	};
 	onRotate();
 	
-	// handling for orientation change
-	$(window).on('orientationchange', onRotate);
+	// handling for resize event
+	$(window).on('resize', onRotate);
 });

@@ -5,6 +5,8 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+		<link href="css/sanitize.css" rel="stylesheet">
+		<link href="css/editor.css" rel="stylesheet">
 		<style charset="utf8" type="text/css">
 			/* content */
 			#content {
@@ -88,35 +90,34 @@
 			}
 			#shell-command {
 				width: 100%;
-				height: 48px;
+				color: #ccc;
+				background-color: black;
+				padding: 0;
+				margin: 0;
+				border-bottom: solid 1px #444;
+			}
+			#shell-prompt {
+				color: #444;
+			}
+			#shell-query {
+				width: 90%;
+			}
+			#shell-query:focus {
+				outline: none;
+			}
+			#shell-log-clear {
+				width: 32px;
+				text-align: center;
+				float: right;
+				background-color: #444;
+				border: transparent;
+				border-radius: 4px;
 			}
 			#shell-logs {
 				width: 100%;
 				/*height: 400px;*/
 				margin: 0;
 				padding: 0;
-			}
-			#shell-query {
-				float: left;
-				width: 80%;
-				height: 100%;
-				margin: 0;
-				padding: 0;
-				border-radius: 4px;
-			}
-			#shell-exec {
-				float: right;
-				width: 20%;
-				height: 100%;
-				text-align: center;
-			}
-			#shell-exec-button {
-				float: left;
-				margin: 0 auto;
-			}
-			#shell-clear-button {
-				float: right;
-				margin: 0 auto;
 			}
 			/* log */
 			#log-main {
@@ -125,20 +126,14 @@
 				height: 100%;
 			}
 			#log-container {
+				background-color: black;
 				width: 100%;
 				height: 100%;
 				margin: 0;
 				padding: 0;
 			}
-			#log-line {
-				margin: 0;
-				padding: 0;
-				border: 1px;
-				border-radius: 3px;
-			}
 			#log-clear-button {
 				float: right;
-				margin: 0 auto;
 			}
 		</style>
 	</head>
@@ -176,20 +171,23 @@
 					<div class="tab-pane" id="menu-docker">
 						<div id="shell-main">
 							<div id="shell-command">
-								<textarea id="shell-query" data-bind="value: $data.query"></textarea>
-								<div id="shell-exec">
-									<button class="btn glyphicon" id="shell-exec-button" data-bind="click: $data.click, css: $data.css"></button>
-									<button class="btn btn-primary glyphicon glyphicon-trash" id="shell-clear-button" data-bind="click: clear"></button>
-								</div>
+								<span id="shell-prompt">$</span>
+								<input id="shell-query" type="text" placeholder="input command" list="shell-history" data-bind="value: query, css: css, valueUpdate: 'keypress', event: { keypress: click }">
+								<button id="shell-log-clear" data-bind="click: clear">x</button>
+								<datalist id="shell-history" data-bind="foreach: history">
+									<option data-bind="value: $data">
+								</datalist>
 							</div>
-							<pre id="shell-logs" data-bind="text: $data.logs"></pre>
+							<div id="log-container" data-bind="foreach: logs">
+								<pre class="log-line" data-bind="text: $data.log, css: $data.css, click: $data.expand"></pre>
+							</div>
 						</div>
 					</div>
 					<div class="tab-pane" id="menu-log">
 						<div id="log-main">
 							<button class="btn btn-primary glyphicon glyphicon-trash" id="log-clear-button" data-bind="click: clear"></button>
 							<div id="log-container" data-bind="foreach: logs">
-								<div class="log-line" data-bind="text: $data.log"></div>
+								<div class="log-line" data-bind="text: $data.log, css: $data.css, click: $data.expand"></div>
 							</div>
 						</div>
 					</div>
@@ -201,11 +199,11 @@
 		<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 		<script src="http://cdnjs.cloudflare.com/ajax/libs/knockout/2.3.0/knockout-min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
-		<script src="models/editor.js" type="text/javascript" chatset="utf8"></script>
-		<script src="models/entry.js" type="text/javascript" chatset="utf8"></script>
-		<script src="models/log.js" type="text/javascript" chatset="utf8"></script>
-		<script src="models/shell.js" type="text/javascript" chatset="utf8"></script>
-		<script src="client.js" type="text/javascript" chatset="utf8"></script>
+		<script src="js/models/_log.js" type="text/javascript" chatset="utf8"></script>
+		<script src="js/models/editor.js" type="text/javascript" chatset="utf8"></script>
+		<script src="js/models/entry.js" type="text/javascript" chatset="utf8"></script>
+		<script src="js/models/log.js" type="text/javascript" chatset="utf8"></script>
+		<script src="js/models/shell.js" type="text/javascript" chatset="utf8"></script>
+		<script src="js/client.js" type="text/javascript" chatset="utf8"></script>
 	</body>
 </html>
