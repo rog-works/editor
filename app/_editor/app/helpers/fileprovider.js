@@ -131,32 +131,13 @@ let _mkdir = (path) => {
  * @return int string comparation
  */
 let _sort = (a, b) => {
-	let equalLayer = Path.dirname(a) === Path.dirname(b);
-	let aIsFile = isFile(a);
-	let bIsFile = isFile(b);
-	let isFiles = aIsFile && bIsFile;
-	let isDirs = (!aIsFile) && (!bIsFile);
-	if (equalLayer) {
-		if (isFiles || isDirs) {
-			return a > b ? 1 : -1;
-		} else {
-			return aIsFile ? 1 : -1;
-		}
-	} else {
-		// XXX ???
-		let aIsRoot = Path.dirname(a) === '.';
-		let bIsRoot = Path.dirname(b) === '.';
-		let isRoots = aIsRoot && bIsRoot;
-		if (isRoots) {
-			return a > b ? 1 : -1;
-		} else if ((aIsRoot && aIsFile) || (bIsRoot && bIsFile)) {
-			return aIsRoot ? 1 : -1;
-		} else if ((aIsRoot && !aIsFile) || (bIsRoot && !bIsFile)) {
-			return a > b ? 1 : -1;
-		} else {
-			return Path.dirname(a) > Path.dirname(b) ? 1 : -1;
-		}
+	if (isFile(a)) {
+	    a = Path.dirname(a) + '/z_' + Path.basename(a);
 	}
+	if (isFile(b)) {
+	    b = Path.dirname(b) + '/z_' + Path.basename(b);
+	}
+	return a > b ? 1 : -1;
 };
 
 module.exports = {
@@ -168,3 +149,4 @@ module.exports = {
 	remove: remove,
 	isFile: isFile
 };
+
