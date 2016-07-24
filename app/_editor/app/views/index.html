@@ -9,7 +9,7 @@
 			/* content */
 			#content {
 				width: 100%;
-				height: 480px;
+				height: 360px;
 				margin: 0;
 				padding: 0;
 			}
@@ -38,7 +38,7 @@
 			/* menu-xs */
 			#menu-xs {
 				width: 100%;
-				height: 480px;
+				height: 360px;
 				top: 0;
 				left: 0;
 				background-color: white;
@@ -83,7 +83,8 @@
 			/* shell */
 			#shell-main {
 				width: 100%;
-				height: 448px;
+				/*height: 448px;*/
+				height: 100%;
 			}
 			#shell-command {
 				width: 100%;
@@ -91,7 +92,7 @@
 			}
 			#shell-logs {
 				width: 100%;
-				height: 400px;
+				/*height: 400px;*/
 				margin: 0;
 				padding: 0;
 			}
@@ -120,16 +121,20 @@
 			/* log */
 			#log-main {
 				width: 100%;
-				height: 448px;
+				/*height: 448px;*/
+				height: 100%;
 			}
 			#log-container {
 				width: 100%;
+				height: 100%;
 				margin: 0;
 				padding: 0;
 			}
 			#log-line {
 				margin: 0;
 				padding: 0;
+				border: 1px;
+				border-radius: 3px;
 			}
 			#log-clear-button {
 				float: right;
@@ -182,11 +187,9 @@
 					</div>
 					<div class="tab-pane" id="menu-log">
 						<div id="log-main">
-							<div id="width" data-bind="text: width"></div>
-							<div id="height" data-bind="text: height"></div>
 							<button class="btn btn-primary glyphicon glyphicon-trash" id="log-clear-button" data-bind="click: clear"></button>
 							<div id="log-container" data-bind="foreach: logs">
-								<pre class="log-line" data-bind="text: $data.log"></pre>
+								<div class="log-line" data-bind="text: $data.log"></div>
 							</div>
 						</div>
 					</div>

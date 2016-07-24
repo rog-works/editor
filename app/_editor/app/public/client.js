@@ -20,8 +20,6 @@ $(() => {
 		    };
 			this.socket.onopen = () => { console.log('open'); };
 			this.socket.onclose = () => { console.log('close'); };
-			self.width = window.screen.width;
-			self.height = window.screen.height;
 			self.logs = ko.observableArray(self.logs);
 			// self.msg = ko.observable(self.msg);
 			ko.applyBindings(self, document.getElementById('log-main'));
@@ -364,6 +362,21 @@ $(() => {
 		editor: Editor.init(),
 		entry: Entry.init(),
 		shell: Shell.init(),
-		ws: Log.init()
+		log: Log.init()
 	};
+	let onRotate = () => {
+	    let w = window.screen.width;
+	    let h = window.screen.height;
+	    let ids = [
+	        '#content',
+	        '#menu-xs'
+        ];
+	    for (let id of ids) {
+	        $(id).height(h);
+	    }
+	};
+	onRotate();
+	
+	// handling for orientation change
+	$(window).on('orientationchange', onRotate);
 });
