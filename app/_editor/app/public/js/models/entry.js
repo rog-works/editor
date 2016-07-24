@@ -4,10 +4,12 @@ class Entry {
 	}
 
 	extend (entity) {
+		let depth = entity.path.split('/').length;
 		this.type = entity.type;
-		this.path = ko.observable(entity.path);
+		this.path = entity.path;
+		this.name = ko.observable(entity.name);
 		this.class = ko.observable(Entry.toClass(this.type));
-		this.selected = ko.observable('');
+		this.css = ko.observable(`entry-depth${depth}`);
 		this.edited = 'isTrue';
 		this.attr = {
 			dir: entity.dir
@@ -35,11 +37,11 @@ class Entry {
 	}
 
 	rename () {
-		let to = window.prompt('change file path', this.path());
+		let to = window.prompt('change file path', this.path);
 		if (!Entry.validSavePath(to) || Entry.pathExists(to)) {
 			return;
 		}
-		let encodePath = encodeURIComponent(this.path());
+		let encodePath = encodeURIComponent(this.path);
 		let encodeParam = $.param({to: to});
 		let url = `/entry/${encodePath}/rename?${encodeParam}`;
 		$.ajax({
@@ -47,18 +49,18 @@ class Entry {
 			type: 'PUT',
 			dataType: 'json',
 			success: (toPath) => {
-				this.path(toPath);
+				this.path = toPath;
 			}
 		});
 	}
 
 	delete () {
-		let ok = confirm(`'${this.path()}' deleted?`);
+		let ok = confirm(`'${this.path}' deleted?`);
 		if (!ok) {
 			console.log('delete cancel');
 			return;
 		}
-		let path = this.path();
+		let path = this.path;
 		let url = '/entry/' + encodeURIComponent(path);
 		$.ajax({
 			url: url,
@@ -131,7 +133,7 @@ class Entry {
 
 	static toClass (type) {
 		const classes = {
-			file: 'glyphicon-file',
+			file: 'glyphicon-option-vertical',
 			directory: 'glyphicon-folder-open',
 			directoryClose:  'glyphicon-folder-close'
 		};
@@ -151,7 +153,8 @@ class EntryAdd extends Entry {
 		super();
 		super.extend({
 			type: 'directory',
-			path: '- create file -',
+			path: '',
+			name: '- create file -',
 			dir: ''
 		});
 		this.edited = 'isFalse';
@@ -183,13 +186,16 @@ class EntryFile extends Entry {
 
 	activate () {
 		for (let entry of APP.entry.entries()) {
-			entry.selected('');
+			let next = entry.css().split(' ').filter((css) => {
+				return css !== "active";
+			});
+			entry.css(next);
 		}
-		this.selected('active');
+		this.css(`${this.css()} active`);
 	}
 
 	click () {
-		this.load(this.path());
+		this.load(this.path);
 	}
 }
 
@@ -209,6 +215,6 @@ class EntryDirectory extends Entry {
 		this.opened = !this.opened;
 		let toggleClass = Entry.toClass(this.opened ? 'directory' : 'directoryClose');
 		this.class(toggleClass);
-		this.toggle(this.path());
+		this.toggle(this.path);
 	}
 }

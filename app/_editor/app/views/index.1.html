@@ -6,88 +6,51 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
 		<link href="..\public\css\sanitize.css" rel="stylesheet">
-		<style charset="utf8" type="text/css">
-			#log-container {
-				background-color: black;
-				width: 100%;
-				height: 640px;
+		<link href="..\public\css\editor.css" rel="stylesheet">
+		<style type="text/css" charset="utf8">
+			.entry-depth0 {
+				padding-left: inherit;
 			}
-			.log-line.line-close::before {
-				content: ">";
-				color: #444;
+			.entry-depth1 {
+				padding-left: 20px;
 			}
-			.log-line {
-				color: #ccc;
-				padding: 4px;
-				border-bottom: solid 1px #444;
-				word-break: break-all;
+			.entry-depth2 {
+				padding-left: 40px;
 			}
-			.log-line.line-close {
-				overflow: hidden;
-				text-overflow: ellipsis;
-				white-space: nowrap;
-			}
-			#shell-command {
-				color: #ccc;
-				background-color: black;
-				padding: 0;
-				margin: 0;
-				border-bottom: solid 1px #444;
-			}
-			#shell-prompt {
-				color: #444;
-			}
-			#shell-result-clear {
-				width: 32px;
-				text-align: center;
-				float: right;
-				background-color: #444;
-				border: transparent;
-				border-radius: 4px;
-			}
-			#shell-query {
-				width: 100%;
+			.list-group-item.entry-item:nth-child(even) {
+				background-color: #eee;
 			}
 		</style>
 	</head>
 	<body>
-		<div id="shell-command">
-			<span id="shell-prompt">$
-				<input id="shell-query" type="text" placeholder="input command" autocomplete="on" list="history">
-			</span>
-			<button id="shell-reqult-clear">x</button>
-			<datalist id="history"></datalist>
-		</div>
-		<div id="log-container">
-			<div class="log-line">
-				123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
-			</div>
-			<div class="log-line line-close">
-				123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
-			</div>
-		</div>
+		<ul class="list-group" id="entry-main">
+			<li class="list-group-item entry-item entry-depth0">
+				<i class="glyphicon glyphicon-option-vertical"></i>
+				<a>/file</a>
+			</li>
+			<li class="list-group-item entry-item entry-depth0">
+				<i class="glyphicon glyphicon-folder-open"></i>
+				<a>/dir</a>
+			</li>
+			<li class="list-group-item entry-item entry-depth1">
+				<i class="glyphicon glyphicon-option-vertical"></i>
+				<a>/dir/file</a>
+			</li>
+			<li class="list-group-item entry-item entry-depth1">
+				<i class="glyphicon glyphicon-folder-open"></i>
+				<a>/dir/dir</a>
+			</li>
+			<li class="list-group-item entry-item entry-depth2">
+				<i class="glyphicon glyphicon-option-vertical"></i>
+				<a>/dir/dir/file</a>
+			</li>
+		</ul>
 		<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 		<script src="http://cdnjs.cloudflare.com/ajax/libs/knockout/2.3.0/knockout-min.js"></script>
 		<script type="text/javascript" charset="utf8">
 			'use strict';
-			$('#shell-query').on('keypress', (e) => {
-				if (e.keyCode === 13) {
-					console.log('enter!!');
-					let self = $(e.target);
-					let value = self.val();
-					let history = $('#history');
-					if (value.length > 0) {
-						history.append(`<option value="${value}">`);
-						console.log('append!! ' + value);
-					}
-				}
-			});
-			$('.log-line').on('click', (e) => {
-				let self = $(e.target);
-				self.toggleClass('line-close');
-				return false;
-			});
+			
 		</script>
 	</body>
 </html>

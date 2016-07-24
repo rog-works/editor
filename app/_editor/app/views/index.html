@@ -26,10 +26,9 @@
 				<div class="tab-content">
 					<div class="tab-pane active" id="menu-entry">
 						<ul class="list-group" id="entry-main" data-bind="foreach: entries">
-							<li class="list-group-item" data-bind="attr: $data.attr, css: $data.selected">
-								<i class="glyphicon" data-bind="css: $data.class">
-									<a data-bind="text: $data.path, click: $data.click"></a>
-								</i>
+							<li class="list-group-item" data-bind="attr: $data.attr, css: $data.css">
+								<i class="glyphicon" data-bind="css: $data.class"></i>
+								<a data-bind="text: $data.name, click: $data.click"></a>
 								<div class="entry-control" data-bind="if: $data.edited">
 									<span>
 										<a class="glyphicon glyphicon-pencil" style="float: left" data-bind="click: $data.rename"></a>

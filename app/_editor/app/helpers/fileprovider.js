@@ -17,7 +17,7 @@ let entries = (directory, nameOnly = true) => {
 		// nosort: true
 	};
 	let entries = glob.sync(directory + '/**', options);
-	// entries.sort(_sort);
+	entries.sort(_sort);
 	if (nameOnly) {
 		return entries.map((self) => {
 			return self.substr(directory.length);
@@ -131,14 +131,31 @@ let _mkdir = (path) => {
  * @return int string comparation
  */
 let _sort = (a, b) => {
+	let equalLayer = Path.dirname(a) === Path.dirname(b);
 	let aIsFile = isFile(a);
 	let bIsFile = isFile(b);
 	let isFiles = aIsFile && bIsFile;
 	let isDirs = (!aIsFile) && (!bIsFile);
-	if (isFiles || isDirs) {
-		return a === b ? 0 : (a > b ? 1 : -1);
+	if (equalLayer) {
+		if (isFiles || isDirs) {
+			return a > b ? 1 : -1;
+		} else {
+			return aIsFile ? 1 : -1;
+		}
 	} else {
-		return aIsFile ? 1 : -1;
+		// XXX ???
+		let aIsRoot = Path.dirname(a) === '.';
+		let bIsRoot = Path.dirname(b) === '.';
+		let isRoots = aIsRoot && bIsRoot;
+		if (isRoots) {
+			return a > b ? 1 : -1;
+		} else if ((aIsRoot && aIsFile) || (bIsRoot && bIsFile)) {
+			return aIsRoot ? 1 : -1;
+		} else if ((aIsRoot && !aIsFile) || (bIsRoot && !bIsFile)) {
+			return a > b ? 1 : -1;
+		} else {
+			return Path.dirname(a) > Path.dirname(b) ? 1 : -1;
+		}
 	}
 };
 
