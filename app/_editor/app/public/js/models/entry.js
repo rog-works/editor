@@ -75,10 +75,10 @@ class Entry {
 		});
 	}
 
-	static init () {
+	static init (id = 'entry-main') {
 		let self = new EntryRoot();
 		self.entries = ko.observableArray(self.entries);
-		ko.applyBindings(self, document.getElementById('entry-main'));
+		ko.applyBindings(self, document.getElementById(id));
 		self.load();
 		return self;
 	}
@@ -97,7 +97,7 @@ class Entry {
 	}
 
 	static validSavePath (path) {
-		if (typeof path !== "string" || path.length === 0) {
+		if (typeof path !== 'string' || path.length === 0) {
 			console.log('invalid argument');
 			return false;
 		}
@@ -135,6 +135,7 @@ class Entry {
 		const classes = {
 			file: 'glyphicon-option-vertical',
 			directory: 'glyphicon-folder-open',
+			// XXX
 			directoryClose:  'glyphicon-folder-close'
 		};
 		return classes[type];
@@ -152,7 +153,7 @@ class EntryAdd extends Entry {
 	constructor () {
 		super();
 		super.extend({
-			type: 'directory',
+			type: 'file',
 			path: '',
 			name: '- create file -',
 			dir: ''
@@ -187,7 +188,7 @@ class EntryFile extends Entry {
 	activate () {
 		for (let entry of APP.entry.entries()) {
 			let next = entry.css().split(' ').filter((css) => {
-				return css !== "active";
+				return css !== 'active';
 			});
 			entry.css(next);
 		}
