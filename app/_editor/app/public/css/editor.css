@@ -74,6 +74,9 @@
 	padding-right: 0;
 	padding-bottom: 2px;
 }
+#entry-main .list-group-item.active:nth-child(even) {
+	background-color: #428bca;
+}
 #entry-main .list-group-item:nth-child(even) {
 	background-color: #eee;
 }
