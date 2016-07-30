@@ -21,15 +21,17 @@ class Shell {
 
 	/**
 	 * Execution to '<command> [argument...]'
-	 * @param string command command name
-	 * @param string[] Command arguments
+	 * @param string command Taraget command
+	 * @param string[] args Command arguments
+	 * @param object _options Option
 	 * @return bool Execution result
 	 */
-	run (command, args) {
+	run (command, args, _options = {}) {
 		let self = this;
+		let options = _options || this._options;
 		return (new ProcessProvider(command))
 			.add(args)
-			.option(this._options)
+			.option(options)
 			.on('stdout', (data) => { self._onStdout(data); })
 			.on('stderr', (data) => { self._onStderr(data); })
 			.run();

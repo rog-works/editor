@@ -39,6 +39,14 @@ editor-log:
   environment:
     FLUENTD_CONF: fluent-log.conf
 
+# editor-be:
+#   container_name: editor-be
+#   image: localhost:49000/editor-be:latest
+#   ports:
+#     - 6379:6379
+#   environment:
+#     xxxx: xxxx
+
 editor-md:
   container_name: editor-md
   image: localhost:49000/editor-md:latest

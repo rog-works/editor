@@ -12,7 +12,7 @@ if [ $# -le 1 ]; then
 	echo "- -t: tag"
 	echo "- -p: push"
 	echo "# Examples"
-	echo "- $ bash build.sh editor-log --all"
+	echo "- $ bash build.sh editor-be --all"
 	exit 1
 fi
 
