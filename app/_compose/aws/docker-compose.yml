@@ -26,8 +26,20 @@ editor-log:
   image: localhost:49000/editor-log:latest
   ports:
     - 18082:8080
+  volumes:
+    - ~/editor/app/log/app/etc/fluent-log.conf:/fluentd/etc/fluent-log.conf
   volumes_from:
     - editor-app
+  environment:
+    FLUENTD_CONF: fluent-log.conf
+
+# editor-be:
+#   container_name: editor-be
+#   image: localhost:49000/editor-be:latest
+#   ports:
+#     - 6379:6379
+#   environment:
+#     xxxx: xxxx
 
 editor-md:
   container_name: editor-md
