@@ -5,37 +5,34 @@ class Log extends _Log {
 		this.socket = null;
 	}
 
-	static init (wsUri = 'ws://localhost:18082', id = 'log-main') {
+	static init (id = 'log-main') {
 		let self = new Log();
-		this.socket = new WebSocket(wsUri);
-		this.socket.onmessage = self._onMessage;
-		this.socket.onopen = self._onOpen;
-		this.socket.onclose = self._onClose;
+		// XXX
+		APP.ws.on('message', self._onMessage);
 		ko.applyBindings(self, document.getElementById(id));
 		return self;
 	}
 
-	on (msgs) {
-		console.log(msgs);
-		for (let key in msgs) {
-			super.on(msgs[key]);
+	on (msg) {
+		console.log(msg);
+		super.on(this._parseLine(msg));
+	}
+
+	_parseLine (msg) {
+		let line = '';
+		let delimiter = '';
+		for (let key in msg) {
+			line += delimiter + msg[key];
+			delimiter = ' ';
 		}
+		return line;
 	}
 
 	_onMessage (res) {
-		let data = JSON.parse(res.data);
-		data.forEach((msgs) => {
-			// XXX this binding...
-			APP.log.on(msgs);
-		});
-	}
-
-	_onOpen () {
-		console.log('open');
-	}
-
-	_onClose () {
-		console.log('close');
+		let [tag, msg] = JSON.parse(res.data);
+		if (tag === 'editor.access-log') {
+			APP.log.on(msg);
+		}
 	}
 }
 

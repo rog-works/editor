@@ -32,8 +32,12 @@ editor-log:
   image: localhost:49000/editor-log:latest
   ports:
     - 18082:8080
+  volumes:
+    - /vagrant/editor/app/log/app/etc/fluent-log.conf:/fluentd/etc/fluent-log.conf
   volumes_from:
     - editor-app
+  environment:
+    FLUENTD_CONF: fluent-log.conf
 
 editor-md:
   container_name: editor-md
@@ -41,8 +45,8 @@ editor-md:
   volumes:
     - /vagrant/editor/app/md/app:/opt/app
   ports:
-    - "18081:80"
-    # - "3306:3306"
+    - 18081:80
+    # - 3306:3306
   environment:
     MAIN_SCRIPT: /opt/app/server.js
     PORT: 80

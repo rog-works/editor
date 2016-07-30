@@ -1,6 +1,10 @@
 'use strict';
 let APP = {};
 $(() => {
+	// XXX 
+	$.extend(APP, {
+		ws: new WS(),
+	});
 	$.extend(APP, {
 		editor: Editor.init(),
 		entry: Entry.init(),
