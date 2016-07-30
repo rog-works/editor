@@ -35,8 +35,8 @@ editor-md:
   volumes:
     - ~/editor/app/md/app:/opt/app
   ports:
-    - "18081:80"
-    # - "3306:3306"
+    - 18081:80
+    # - 3306:3306
   environment:
     MAIN_SCRIPT: /opt/app/server.js
     PORT: 80
