@@ -26,8 +26,8 @@
 				<div class="tab-content">
 					<div class="tab-pane active" id="menu-entry">
 						<ul class="list-group" id="entry-main" data-bind="foreach: entries">
-							<li class="list-group-item" data-bind="attr: $data.attr, css: $data.css">
-								<i class="glyphicon" data-bind="css: $data.class"></i>
+							<li class="list-group-item" data-bind="attr: $data.attr, css: { active: $data.selected, hide: $data.closed() }">
+								<i class="glyphicon" data-bind="css: $data.icon"></i>
 								<a data-bind="text: $data.name, click: $data.click"></a>
 								<div class="entry-control" data-bind="if: $data.edited">
 									<span>
@@ -49,7 +49,7 @@
 								</datalist>
 							</div>
 							<div id="log-container" data-bind="foreach: logs">
-								<pre class="log-line" data-bind="text: $data.log, css: $data.css, click: $data.expand"></pre>
+								<pre class="log-line" data-bind="text: $data.log, css: { 'line-close': $data.closed, 'line-separated': $data.separated }, click: $data.expand"></pre>
 							</div>
 						</div>
 					</div>
@@ -57,7 +57,7 @@
 						<div id="log-main">
 							<button class="btn btn-primary glyphicon glyphicon-trash" id="log-clear" data-bind="click: clear"></button>
 							<div id="log-container" data-bind="foreach: logs">
-								<div class="log-line" data-bind="text: $data.log, css: $data.css, click: $data.expand"></div>
+								<div class="log-line line-separated" data-bind="text: $data.log, css: { 'line-close': $data.closed }, click: $data.expand"></div>
 							</div>
 						</div>
 					</div>

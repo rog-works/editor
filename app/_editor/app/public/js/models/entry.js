@@ -8,11 +8,13 @@ class Entry {
 		this.type = entity.type;
 		this.path = entity.path;
 		this.name = ko.observable(entity.name);
-		this.class = ko.observable(Entry.toClass(this.type));
-		this.css = ko.observable(`entry-depth${depth}`);
+		this.icon = ko.observable(Entry.toIcon(this.type));
+		this.selected = ko.observable(false);
+		this.closed = ko.observable(0);
 		this.edited = 'isTrue';
 		this.attr = {
-			dir: entity.dir
+			dir: entity.dir,
+			depth: depth
 		};;
 	}
 
@@ -131,7 +133,7 @@ class Entry {
 		}
 	}
 
-	static toClass (type) {
+	static toIcon (type) {
 		const classes = {
 			file: 'glyphicon-option-vertical',
 			directory: 'glyphicon-folder-open',
@@ -187,12 +189,12 @@ class EntryFile extends Entry {
 
 	activate () {
 		for (let entry of APP.entry.entries()) {
-			let next = entry.css().split(' ').filter((css) => {
-				return css !== 'active';
-			});
-			entry.css(next);
+			if (entry.selected()) {
+				entry.selected(false);
+				break;
+			}
 		}
-		this.css(`${this.css()} active`);
+		this.selected(!this.selected());
 	}
 
 	click () {
@@ -204,18 +206,25 @@ class EntryDirectory extends Entry {
 	constructor (entity) {
 		super();
 		super.extend(entity);
-		this.opened = true;
+		this.expanded = true;
 	}
 
-	toggle (dir) {
-		// XXX
-		$(`#entry-main li[dir^="${dir}"]`).toggleClass('hide');
+	toggle (dir, expanded) {
+		for (let entry of APP.entry.entries()) {
+			if (entry.attr.dir.startsWith(dir)) {
+				if (expanded && entry.closed() > 0) {
+					entry.closed(entry.closed() - 1);
+				} else if (!expanded) {
+					entry.closed(entry.closed() + 1);
+				}
+			}
+		}
 	}
 
 	click () {
-		this.opened = !this.opened;
-		let toggleClass = Entry.toClass(this.opened ? 'directory' : 'directoryClose');
-		this.class(toggleClass);
-		this.toggle(this.path);
+		this.expanded = !this.expanded;
+		let nextIcon = Entry.toIcon(this.expanded ? 'directory' : 'directoryClose');
+		this.icon(nextIcon);
+		this.toggle(this.path, this.expanded);
 	}
 }

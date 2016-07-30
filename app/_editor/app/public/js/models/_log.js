@@ -8,23 +8,29 @@ class _Log {
 		this.logs.removeAll();
 	}
 
-	on (log) {
-		console.log(log);
-		this.logs.push(new LogLine(log));
+	put (log) {
+		return this._on(log, false);
+	}
+
+	line (log) {
+		return this._on(log, true);
+	}
+
+	_on (log, separated) {
+		console.log(log, separated);
+		this.logs.push(new LogLine(log, separated));
+		return true;
 	}
 }
 
 class LogLine {
-	constructor (log) {
+	constructor (log, separated) {
 		this.log = ko.observable(log);
-		this.css = ko.observable('');
+		this.closed = ko.observable(false);
+		this.separated = ko.observable(separated);
 	}
 
 	expand () {
-		if (this.css() === '') {
-			this.css('line-close');
-		} else {
-			this.css('');
-		}
+		this.closed(!this.closed());
 	}
 }

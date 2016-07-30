@@ -14,8 +14,7 @@ class Log extends _Log {
 	}
 
 	on (msg) {
-		console.log(msg);
-		super.on(this._parseLine(msg));
+		return this.line(this._parseLine(msg));
 	}
 
 	_parseLine (msg) {
@@ -28,11 +27,12 @@ class Log extends _Log {
 		return line;
 	}
 
-	_onMessage (res) {
-		let [tag, msg] = JSON.parse(res.data);
+	_onMessage (msg) {
+		let [tag, data] = msg;
 		if (tag === 'editor.access-log') {
-			APP.log.on(msg);
+			return APP.log.on(data);
 		}
+		return true;
 	}
 }
 

@@ -86,31 +86,31 @@
 .entry-control {
 	float: right;
 }
-.entry-depth1 {
+[depth="1"] {
 	padding-left: inherit;
 }
-.entry-depth2 {
+[depth="2"] {
 	padding-left: 20px;
 }
-.entry-depth3 {
+[depth="3"] {
 	padding-left: 40px;
 }
-.entry-depth4 {
+[depth="4"] {
 	padding-left: 60px;
 }
-.entry-depth5 {
+[depth="5"] {
 	padding-left: 80px;
 }
-.entry-depth6 {
+[depth="6"] {
 	padding-left: 100px;
 }
-.entry-depth7 {
+[depth="7"] {
 	padding-left: 120px;
 }
-.entry-depth8 {
+[depth="8"] {
 	padding-left: 140px;
 }
-.entry-depth9 {
+[depth="9"] {
 	padding-left: 160px;
 }
 
@@ -162,15 +162,16 @@
 }
 .log-line {
 	color: #ccc;
-	padding: 4px;
-	border-bottom: solid 1px #444;
+	padding: 0;
 	word-break: break-all;
 	/* XXX invalidate bootstrap pre style */
-	border-top: 0;
-	border-left: 0;
-	border-right: 0;
+	border: 0;
 	background-color: black;
 	margin: 0;
+}
+.log-line.line-separated {
+	border-top: solid 1px #444;
+	padding: 4px 0 0 0;
 }
 .log-line.line-close::before {
 	content: ">";

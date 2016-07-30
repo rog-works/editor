@@ -9,6 +9,8 @@ class Shell extends _Log {
 
 	static init (id = 'shell-main') {
 		let self = new Shell();
+		// XXX
+		APP.ws.on('message', self._onMessage);
 		ko.applyBindings(self, document.getElementById(id));
 		return self;
 	}
@@ -24,13 +26,20 @@ class Shell extends _Log {
 		this.query('');
 		this.css('disabled');
 		$.post('/shell', {query: query}, (result) => {
-			let log = `$ ${query}\n${result.output}`
-			this.on(log);
+			this.line(`$ ${query}`);
 			this.css('');
 			if (this.history.indexOf(query) === -1) {
 				this.history.push(query);
 			}
 		});
 		return false;
+	}
+
+	_onMessage (msg) {
+		let [tag, data] = msg;
+		if (tag === 'editor.shell-log') {
+			return APP.shell.put(data.message);
+		}
+		return true;
 	}
 }

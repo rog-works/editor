@@ -28,7 +28,8 @@ class WS {
 	}
 
 	_onMessage (msg) {
-		APP.ws.listen('message', msg);
+		// XXX via fluent-plugin-websocket
+		APP.ws.listen('message', JSON.parse(msg.data));
 	}
 
 	_onOpen () {
