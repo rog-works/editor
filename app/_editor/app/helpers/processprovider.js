@@ -1,8 +1,6 @@
 'use strict';
 
-const LOG_PATH = '/var/log/app/editor-shell.log';
 const spawn = require('child_process').spawn;
-const stdout = require('fs').createWriteStream(LOG_PATH);
 
 class ProcessProvider {
 	/**
@@ -12,55 +10,80 @@ class ProcessProvider {
 	constructor (command) {
 		this._command = command;
 		this._args = [];
-		this._lastExecStatus = 'idle';
+		this._options = {};
+		this._handlers = {
+			// stdin: this.stdin,
+			stdout: this._stdout,
+			stderr: this._stderr
+		};
 	}
 
 	/**
 	 * Added argument
+	 * @param string/array arg argument
 	 * @param bool available Added condition
-	 * @param string arg argument
 	 * @return ProcessProvider this
 	 */
 	add (arg, available = true) {
 		if (available) {
-			this._args.push(arg);
+			if (Array.isArray(arg)) {
+				for (let a of arg) {
+					this._args.push(a);
+				}
+			} else {
+				this._args.push(arg);
+			}
 		}
 		return this;
 	}
 
 	/**
-	 * Query build
-	 * @return string Executed query
+	 * Setup options
+	 * @param object options see child_process.spawn
+	 * @return ProcessProvider this
 	 */
-	build () {
-		let args = this._args.join(' ');
-		return `${this._command} ${args}`;
+	option (options) {
+		this._options = options;
+		return this;
 	}
 
 	/**
-	 * Executed status
-	 * @return string Executed status
+	 * Setup event handler
+	 * @oaram string event tag. 'stdout' or 'stderr'
+	 * @param function handler handling function
+	 * @return ProcessProvider this
 	 */
-	status () {
-		return this._lastExecStatus;
+	on (tag, handler) {
+		this._handlers[tag] = handler;
+		return this;
 	}
 
 	/**
-	 * Query executed
-	 * @return string output
+	 * The default handler for the stdout event
+	 * @oaram string output stdout
 	 */
-	exec () {
+	_stdout (data) {
+		console.log(data);
+	}
+
+	/**
+	 * The default handler for the stderr event
+	 * @oaram string output stderr
+	 */
+	_stderr (data) {
+		console.log(data);
+	}
+
+	/**
+	 * Run the query
+	 * @return bool true
+	 */
+	run () {
     	console.log('executed', this._command, this._args);
-        let child = spawn(this._command, this._args);
-        child.stdout.on('data', (data) => {
-            stdout.write(data); 
-		    this._lastExecStatus = 'success';
-        });
-        child.stderr.on('data', (data) => {
-            stdout.write(data);
-	    	this._lastExecStatus = 'error';
-        });
-		return 'success';
+        let child = spawn(this._command, this._args, this._options);
+        child.stdout.on('data', this._handlers.stdout);
+        child.stderr.on('data', this._handlers.stderr);
+		return true;
 	}
 }
 

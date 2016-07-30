@@ -8,7 +8,7 @@ router.post('/', (req, res) => {
 	console.log(`index able!! ${req.body.query}`);
 	let args = req.body.query.split(' ');
 	let command = args.shift();
-	let result = Entity.command(command, args);
+	let result = (new Entity()).run(command, args);
 	Render.json(res, result);
 });
 

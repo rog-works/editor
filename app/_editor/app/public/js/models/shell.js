@@ -24,9 +24,9 @@ class Shell extends _Log {
 			return true;
 		}
 		this.query('');
+		this.line(`$ ${query}`);
 		this.css('disabled');
 		$.post('/shell', {query: query}, (result) => {
-			this.line(`$ ${query}`);
 			this.css('');
 			if (this.history.indexOf(query) === -1) {
 				this.history.push(query);

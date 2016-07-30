@@ -2,42 +2,54 @@
 
 let ProcessProvider = require('../helpers/processprovider');
 
-/** result keys */
-let keys = () => {
-	return ['query', 'output', 'status'];
-};
+/** current working directory */
+const CURRENT_DIR = '/opt/app';
 
-/**
- * Execution to 'docker <command> [options...]'
- * @param string command Docker command
- * @param string[] Command arguments
- * @return ProcessResult result
- */
-let command = (command, args) => {
-	let builder = new ProcessProvider(command);
-	for (let arg of args) {
-		builder.add(arg);
+/** stdout */
+const LOG_PATH = '/var/log/app/editor-shell.log';
+
+class Shell {
+	/**
+	 * Create instance
+	 */
+	constructor () {
+		this._stdout = require('fs').createWriteStream(LOG_PATH);
+		this._options = {
+			cwd: CURRENT_DIR
+		};
 	}
-	return execProxy(builder);
-};
 
-/**
- * Execution to result
- * @param CommandBuilder builder Process command builder
- * @return ProcessResult result
- */
-let execProxy = (builder) => {
-	let query = builder.build();
-	let output = builder.exec();
-	let status = builder.status();
-	return {
-		query: query,
-		output: output,
-		status: status
-	};
-};
+	/**
+	 * Execution to '<command> [argument...]'
+	 * @param string command command name
+	 * @param string[] Command arguments
+	 * @return bool Execution result
+	 */
+	run (command, args) {
+		let self = this;
+		return (new ProcessProvider(command))
+			.add(args)
+			.option(this._options)
+			.on('stdout', (data) => { self._onStdout(data); })
+			.on('stderr', (data) => { self._onStderr(data); })
+			.run();
+	}
 
-module.exports = {
-	keys: keys,
-	command: command
-};
+	/**
+	 * Stdout event handler
+	 * @param string data output stdout
+	 */
+	_onStdout (data) {
+		this._stdout.write(data);
+	}
+
+	/**
+	 * Stderr event handler
+	 * @param string data output stderr
+	 */
+	_onStderr (data) {
+		this._stdout.write(data);
+	}
+}
+
+module.exports = Shell;
