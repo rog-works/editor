@@ -1,27 +1,18 @@
 'use strict';
 
-let execSync = require('child_process').execSync;
+const LOG_PATH = '/var/log/app/editor-shell.log';
+const spawn = require('child_process').spawn;
+const stdout = require('fs').createWriteStream(LOG_PATH);
 
 class ProcessProvider {
 	/**
 	 * Create instance
-	 * @param string _app target application
+	 * @param string command target command
 	 */
-	constructor (_app) {
-		this._app = _app;
-		this._command = '';
+	constructor (command) {
+		this._command = command;
 		this._args = [];
 		this._lastExecStatus = 'idle';
-	}
-
-	/**
-	 * Build command
-	 * @param string _command Executed command
-	 * @return ProcessProvider this
-	 */
-	command (_command) {
-		this._command = _command;
-		return this;
 	}
 
 	/**
@@ -43,7 +34,7 @@ class ProcessProvider {
 	 */
 	build () {
 		let args = this._args.join(' ');
-		return `${this._app} ${this._command} ${args}`;
+		return `${this._command} ${args}`;
 	}
 
 	/**
@@ -59,21 +50,17 @@ class ProcessProvider {
 	 * @return string output
 	 */
 	exec () {
-		let query = this.build();
-		let options = {
-				cwd: '/opt/app/',
-				encoding: 'utf8'
-			};
-		console.log('executed. ' + query);
-		try {
-			let result = execSync(query, options);
-			this._lastExecStatus = 'success';
-			return result;
-		} catch (error) {
-			console.log(error);
-			this._lastExecStatus = 'failure';
-			return '';
-		}
+    	console.log('executed', this._command, this._args);
+        let child = spawn(this._command, this._args);
+        child.stdout.on('data', (data) => {
+            stdout.write(data); 
+		    this._lastExecStatus = 'success';
+        });
+        child.stderr.on('data', (data) => {
+            stdout.write(data);
+	    	this._lastExecStatus = 'error';
+        });
+		return 'success';
 	}
 }
 
