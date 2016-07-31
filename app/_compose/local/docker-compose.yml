@@ -24,12 +24,14 @@ editor-log:
   volumes_from:
     - editor-app
 
-# editor-db:
-#   extends: editor-be
-#     file: ./db.yml
-#     service: db
+editor-db:
+  extends:
+    file: ../db.yml
+    service: db
 
 editor-md:
   extends:
     file: ../md.yml
     service: md
+  links:
+    - editor-db
