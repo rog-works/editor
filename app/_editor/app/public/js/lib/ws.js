@@ -1,20 +1,41 @@
 'use strict';
 class WS {
 	constructor (uri = 'ws://localhost:18082') {
+		this.uri = uri;
+		this.socket = this._connect(this.uri);
 		this.handlers = {
 			message: [],
 			open: [],
-			close: []
+			close: [this._retry]
 		};
-		this.socket = new WebSocket(uri);
-		this.socket.onmessage = this._onMessage;
-		this.socket.onopen = this._onOpen;
-		this.socket.onclose = this._onClose;
+	}
+	
+	_connect (uri) {
+		try {
+		    let socket = new WebSocket(uri);
+    		socket.onmessage = this._onMessage;
+    		socket.onopen = this._onOpen;
+    		socket.onclose = this._onClose;
+    		return socket;
+		} catch (error) {
+		    console.log(error);
+		    return null;
+		}
+	}
+
+	_retry () {
+	    for (let count = 0; count < 5; count += 1) {
+	        let socket = this._connect(this.uri);
+	        if (socket !== null) {
+	            this.socket = socket;
+	            break;
+	        }
+	    }
 	}
 
 	on (tag, handler) {
 		if (tag in this.handlers) {
-			this.handlers[tag].push(handler);
+			this.handlers[tag].unshift(handler);
 		}
 	}
 
