@@ -1,56 +1,29 @@
 editor-app:
-  container_name: editor-app
-  image: localhost:49000/editor-app:latest
-  privileged: true
+  extends:
+    file: ../app.yml
+    service: app
   volumes:
-    # docker for Container from CentOS7 host
+    # docker for Container from AmazonLinux host
     - /usr/bin/docker:/usr/bin/docker
     - /var/run/docker.sock:/var/run/docker.sock
     - /lib64/libdevmapper.so.1.02:/usr/lib/libdevmapper.so.1.02
     - /lib64/libudev.so.0:/usr/lib/libudev.so.0
-    # docker-compose for Container from host
-    - /usr/local/bin/docker-compose:/usr/local/bin/docker-compose
-    # Expose application log
-    - /var/log/app
-    # application-root
-    - ~/editor/app:/opt/app
-  ports:
-    - 8080:80
   environment:
     ENV: aws
-    PORT: 80
-    MAIN_SCRIPT: /opt/app/_editor/app/server.js
 
 editor-log:
-  container_name: editor-log
-  image: localhost:49000/editor-log:latest
-  ports:
-    - 18082:8080
-  volumes:
-    - ~/editor/app/log/app/etc/fluent-log.conf:/fluentd/etc/fluent-log.conf
+  extends:
+    file: ../log.yml
+    service: log
   volumes_from:
     - editor-app
-  environment:
-    FLUENTD_CONF: fluent-log.conf
 
-# editor-be:
-#   container_name: editor-be
-#   image: localhost:49000/editor-be:latest
-#   ports:
-#     - 6379:6379
-#   environment:
-#     xxxx: xxxx
+# editor-db:
+#   extends: editor-be
+#     file: ./db.yml
+#     service: db
 
 editor-md:
-  container_name: editor-md
-  image: localhost:49000/editor-md:latest
-  volumes:
-    - ~/editor/app/md/app:/opt/app
-  ports:
-    - 18081:80
-    # - 3306:3306
-  environment:
-    MAIN_SCRIPT: /opt/app/server.js
-    PORT: 80
-    MYSQL_USER: user
-    MYSQL_PASSWORD: password
+  extends:
+    file: ../md.yml
+    service: md

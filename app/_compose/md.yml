@@ -1,0 +1,10 @@
+md:
+  container_name: editor-md
+  image: localhost:49000/editor-md:latest
+  volumes:
+    - ~/editor/app/md/app:/opt/app
+  ports:
+    - 18081:80
+  environment:
+    MAIN_SCRIPT: /opt/app/server.js
+    PORT: 80
