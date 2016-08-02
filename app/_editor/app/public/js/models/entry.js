@@ -15,7 +15,7 @@ class Entry {
 		this.attr = {
 			dir: entity.dir,
 			depth: depth
-		};;
+		};
 	}
 
 	static update (path, content) {
@@ -26,6 +26,7 @@ class Entry {
 			dataType: 'json',
 			data: {content: content},
 			success: (entity) => {
+			    alert(`${path} entry updated!`)
 				console.log(entity);
 			}
 		});

@@ -21,6 +21,8 @@ $(() => {
 	    for (let id of ids) {
 	        $(id).height(h);
 	    }
+	    // XXX
+	    APP.editor._editor().resize();
 	};
 	onRotate();
 	
