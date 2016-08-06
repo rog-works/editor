@@ -6,7 +6,7 @@ class Console extends _Log {
 	}
 
 	static init (id = 'console-main') {
-		let self = new Console();
+		const self = new Console();
 		ko.applyBindings(self, document.getElementById(id));
 		self.bind();
 		return self;
@@ -15,14 +15,14 @@ class Console extends _Log {
 	bind () {
 		const _log = console.log;
 		const _error = console.error;
-		let self = this;
+		const self = this;
 		console.log = (...args) => {
 			_log.apply(console, args);
-			self.on.apply(self, args);
+			self.on(...args);
 		};
 		console.error = (...args) => {
 			_error.apply(console, args);
-			self.on.apply(self, args);
+			self.on(...args);
 		};
 	}
 

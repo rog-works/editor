@@ -1,36 +1,41 @@
 'use strict';
+
+const RETRY_MAX = 5;
+
 class WS {
 	constructor (uri = 'ws://localhost:18082') {
 		this.uri = uri;
-		this.socket = this._connect(this.uri);
 		this.handlers = {
 			message: [],
 			open: [],
 			close: [this._retry]
 		};
+		this.socket = WS.connect(this);
 	}
 	
-	_connect (uri) {
+	static connect (self) {
 		try {
-		    let socket = new WebSocket(uri);
-    		socket.onmessage = this._onMessage;
-    		socket.onopen = this._onOpen;
-    		socket.onclose = this._onClose;
-    		return socket;
+			let socket = new WebSocket(self.uri);
+			socket.onmessage = self._onMessage;
+			socket.onopen = self._onOpen;
+			socket.onclose = self._onClose;
+			console.log('Connected web socket. ' + self.uri);
+			return socket;
 		} catch (error) {
-		    console.log(error);
-		    return null;
+			console.error(error.message, error.stack);
+			return null;
 		}
 	}
 
 	_retry () {
-	    for (let count = 0; count < 5; count += 1) {
-	        let socket = this._connect(this.uri);
-	        if (socket !== null) {
-	            this.socket = socket;
-	            break;
-	        }
-	    }
+		for (let count = 0; count < RETRY_MAX; count += 1) {
+			let socket = WS.connect(this);
+			if (socket !== null) {
+				this.socket = socket;
+				return;
+			}
+		}
+		console.error('Disconnected web socket. ' + this.uri);
 	}
 
 	on (tag, handler) {
@@ -42,7 +47,7 @@ class WS {
 	listen (tag, ...args) {
 		console.log(tag, args);
 		for (let handler of this.handlers[tag]) {
-			if (!handler.apply(this, args)) {
+			if (!handler(...args)) {
 				break;
 			}
 		}

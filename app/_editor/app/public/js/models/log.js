@@ -1,4 +1,5 @@
 'use strict';
+
 class Log extends _Log {
 	constructor () {
 		super();
@@ -6,9 +7,9 @@ class Log extends _Log {
 	}
 
 	static init (id = 'log-main') {
-		let self = new Log();
-		// XXX
-		APP.ws.on('message', self._onMessage);
+		const self = new Log();
+		// XXX depends on APP...
+		APP.ws.on('message', (msg) => { return self._onMessage(msg); });
 		ko.applyBindings(self, document.getElementById(id));
 		return self;
 	}
@@ -27,10 +28,9 @@ class Log extends _Log {
 		return line;
 	}
 
-	_onMessage (msg) {
-		let [tag, data] = msg;
+	_onMessage ([tag, data]) {
 		if (tag === 'editor.access-log') {
-			return APP.log.on(data);
+			return this.on(data);
 		}
 		return true;
 	}
