@@ -29,7 +29,7 @@ class Editor {
 			yml: 'yaml',
 			yaml: 'yaml'
 		};
-		return (ext in map) ? `ace/mode/${map[ext]}` : 'ace/mode/javascript';
+		return (ext in map) ? `ace/mode/${map[ext]}` : 'ace/mode/sh';
 	}
 
 	load (path = '#', content = '') {
