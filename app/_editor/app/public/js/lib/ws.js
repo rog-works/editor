@@ -16,9 +16,9 @@ class WS {
 	static connect (self) {
 		try {
 			let socket = new WebSocket(self.uri);
-			socket.onmessage = self._onMessage;
-			socket.onopen = self._onOpen;
-			socket.onclose = self._onClose;
+			socket.onmessage = (msg) => { self._onMessage(msg); };
+			socket.onopen = () => { self._onOpen(); };
+			socket.onclose = () => { self._onClose(); };
 			console.log('Connected web socket. ' + self.uri);
 			return socket;
 		} catch (error) {
@@ -55,14 +55,14 @@ class WS {
 
 	_onMessage (msg) {
 		// XXX via fluent-plugin-websocket
-		APP.ws.listen('message', JSON.parse(msg.data));
+		this.listen('message', JSON.parse(msg.data));
 	}
 
 	_onOpen () {
-		APP.ws.listen('open');
+		this.listen('open');
 	}
 
 	_onClose () {
-		APP.ws.listen('close');
+		this.listen('close');
 	}
 }
