@@ -4,95 +4,93 @@ class Entry {
 	}
 
 	extend (entity) {
-		let depth = entity.path.split('/').length;
+		const depth = entity.path.split('/').length;
 		this.type = entity.type;
 		this.path = entity.path;
 		this.name = ko.observable(entity.name);
 		this.icon = ko.observable(Entry.toIcon(this.type));
 		this.selected = ko.observable(false);
 		this.closed = ko.observable(0);
-		this.edited = 'isTrue';
+		this.edited = true;
 		this.attr = {
 			dir: entity.dir,
 			depth: depth
 		};
 	}
 
-	static update (path, content) {
-		let url = '/entry/' + encodeURIComponent(path);
-		$.ajax({
-			url: url,
-			type: 'PUT',
+	static send (url, data, callback) {
+		const _data = {
+			url: `/entry${url}`,
+			type: 'GET',
 			dataType: 'json',
-			data: {content: content},
-			success: (entity) => {
-			    alert(`${path} entry updated!`)
-				console.log(entity);
+			success: callback,
+			error: (res, err) => {
+				console.log(err, res.status, res.statusText, res.responseText);
 			}
+		};
+		$.ajax($.extend(_data, data));
+	}
+
+	static update (path, content) {
+		const url = '/' + encodeURIComponent(path);
+		Entry.send(url, {type: 'PUT', data: {content: content}}, (entity) => {
+			// XXX
+			alert(`${path} entry updated!`);
+			console.log(entity);
 		});
 	}
 
 	static create (path) {
-		$.post('/entry', {path: path}, (entity) => {
-			let entry = Entry.factory(entity);
+		Entry.send('/', {type: 'POST', data: {path: path}}, (entity) => {
+			const entry = Entry.factory(entity);
 			APP.entry.entries.push(entry);
 		});
 	}
 
 	rename () {
-		let to = window.prompt('change file path', this.path);
+		// XXX
+		const to = window.prompt('change file path', this.path);
 		if (!Entry.validSavePath(to) || Entry.pathExists(to)) {
 			return;
 		}
-		let encodePath = encodeURIComponent(this.path);
-		let encodeParam = $.param({to: to});
-		let url = `/entry/${encodePath}/rename?${encodeParam}`;
-		$.ajax({
-			url: url,
-			type: 'PUT',
-			dataType: 'json',
-			success: (toPath) => {
-				this.path = toPath;
-			}
+		const encodePath = encodeURIComponent(this.path);
+		const encodeTo = encodeURIComponent(to);
+		const url = `/${encodePath}/rename?to=${encodeTo}`;
+		Entry.send(url, {type: 'PUT'}, (toPath) => {
+			this.path = toPath;
 		});
 	}
 
 	delete () {
-		let ok = confirm(`'${this.path}' deleted?`);
+		// XXX
+		const ok = confirm(`'${this.path}' deleted?`);
 		if (!ok) {
 			console.log('delete cancel');
 			return;
 		}
-		let path = this.path;
-		let url = '/entry/' + encodeURIComponent(path);
-		$.ajax({
-			url: url,
-			type: 'DELETE',
-			dataType: 'json',
-			success: (deleted) => {
-				let removed = APP.entry.entries.remove((self) => {
-					return self.path() === path;
-				});
-				console.log(removed);
-			}
+		const prev = this.path;
+		const url = '/' + encodeURIComponent(prev);
+		Entry.send(url, {type: 'DELETE'}, (deleted) => {
+			const removed = APP.entry.entries.remove((self) => {
+				return self.path === prev;
+			});
+			console.log(removed);
 		});
 	}
 
 	static init (id = 'entry-main') {
-		let self = new EntryRoot();
+		const self = new EntryRoot();
 		self.entries = ko.observableArray(self.entries);
 		ko.applyBindings(self, document.getElementById(id));
 		self.load();
 		return self;
 	}
 
-	load (path = '/') {
-		let param = $.param({dir: path});
-		let url = `/entry?${param}`;
-		$.get(url, (entities) => {
-			let entries = Entry.toEntries(entities);
+	load (dir = '/') {
+		const url = '/?dir=' + encodeURIComponent(dir);
+		Entry.send(url, {}, (entities) => {
 			APP.entry.entries.removeAll();
-			for (let entry of entries) {
+			for (const entry of Entry.toEntries(entities)) {
 				APP.entry.entries.push(entry);
 			}
 			APP.entry.entries.push(new EntryAdd());
@@ -112,8 +110,8 @@ class Entry {
 	}
 
 	static pathExists (path) {
-		for (let entry of APP.entry.entries()) {
-			if (entry.path() === path) {
+		for (const entry of APP.entry.entries()) {
+			if (entry.path === path) {
 				return true;
 			}
 		}
@@ -161,11 +159,11 @@ class EntryAdd extends Entry {
 			name: '- create file -',
 			dir: ''
 		});
-		this.edited = 'isFalse';
+		this.edited = false;
 	}
 
 	click () {
-		let path = window.prompt('input create file path', '/');
+		const path = window.prompt('input create file path', '/');
 		if (Entry.validSavePath(path) && !Entry.pathExists(path)) {
 			Entry.create(path);
 		}
@@ -179,8 +177,8 @@ class EntryFile extends Entry {
 	}
 
 	load (path = '/') {
-		let url = '/entry/' + encodeURIComponent(path);
-		$.get(url, (entity) => {
+		const url = '/' + encodeURIComponent(path);
+		Entry.send(url, {}, (entity) => {
 			// XXX auto closing to focus editor
 			$('#menu-xs-close').click();
 			APP.editor.load(entity.path, entity.content);
@@ -189,7 +187,7 @@ class EntryFile extends Entry {
 	}
 
 	activate () {
-		for (let entry of APP.entry.entries()) {
+		for (const entry of APP.entry.entries()) {
 			if (entry.selected()) {
 				entry.selected(false);
 				break;
@@ -211,7 +209,7 @@ class EntryDirectory extends Entry {
 	}
 
 	toggle (dir, expanded) {
-		for (let entry of APP.entry.entries()) {
+		for (const entry of APP.entry.entries()) {
 			if (entry.attr.dir.startsWith(dir)) {
 				if (expanded && entry.closed() > 0) {
 					entry.closed(entry.closed() - 1);
@@ -224,7 +222,7 @@ class EntryDirectory extends Entry {
 
 	click () {
 		this.expanded = !this.expanded;
-		let nextIcon = Entry.toIcon(this.expanded ? 'directory' : 'directoryClose');
+		const nextIcon = Entry.toIcon(this.expanded ? 'directory' : 'directoryClose');
 		this.icon(nextIcon);
 		this.toggle(this.path, this.expanded);
 	}

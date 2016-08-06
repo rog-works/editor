@@ -1,12 +1,11 @@
 'use strict';
 class Editor {
 	constructor () {
-		this.path = null;
+		this.path = ko.observable('#');
 	}
 
 	static init () {
 		let self = new Editor();
-		self.path = ko.observable('#');
 		ko.applyBindings(self, document.getElementById('editor-save-xs'));
 		self.load();
 		return self;

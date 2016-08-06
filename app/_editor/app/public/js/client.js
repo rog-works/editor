@@ -1,16 +1,21 @@
 'use strict';
 let APP = {};
 $(() => {
-	// XXX 
-	$.extend(APP, {
-		ws: new WS(),
-	});
-	$.extend(APP, {
-		editor: Editor.init(),
-		entry: Entry.init(),
-		shell: Shell.init(),
-		log: Log.init()
-	});
+	try {
+		// XXX 
+		$.extend(APP, {
+			ws: new WS(),
+		});
+		$.extend(APP, {
+			console: Console.init(),
+			editor: Editor.init(),
+			entry: Entry.init(),
+			shell: Shell.init(),
+			log: Log.init()
+		});
+	} catch (error) {
+		console.error(error.message, error.stack);
+	}
 	let onRotate = () => {
 		// XXX Diviated with the software keyboard is Displayed
 	    let h = window.innerHeight;

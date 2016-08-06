@@ -17,7 +17,7 @@ class _Log {
 	}
 
 	_on (log, separated) {
-		console.log(log, separated);
+		// console.log(log, separated);
 		this.logs.push(new LogLine(log, separated));
 		return true;
 	}

@@ -22,6 +22,7 @@
 					<li><a class="glyphicon glyphicon-briefcase" data-toggle="tab" href="#menu-entry"></a></li>
 					<li><a class="glyphicon glyphicon-console" data-toggle="tab" href="#menu-shell"></a></li>
 					<li><a class="glyphicon glyphicon-dashboard" data-toggle="tab" href="#menu-log"></a></li>
+					<li><a class="glyphicon glyphicon-info-sign" data-toggle="tab" href="#menu-console"></a></li>
 				</ul>
 				<div class="tab-content">
 					<div class="tab-pane active" id="menu-entry">
@@ -29,7 +30,7 @@
 							<li class="list-group-item" data-bind="attr: $data.attr, css: { active: $data.selected, hide: $data.closed() }">
 								<i class="glyphicon" data-bind="css: $data.icon"></i>
 								<a data-bind="text: $data.name, click: $data.click"></a>
-								<div class="entry-control" data-bind="if: $data.edited">
+								<div class="entry-control" data-bind="if: $data.edited === true">
 									<span>
 										<a class="glyphicon glyphicon-pencil" style="float: left" data-bind="click: $data.rename"></a>
 										<a class="glyphicon glyphicon-trash" style="float: right" data-bind="click: $data.delete"></a>
@@ -61,6 +62,14 @@
 							</div>
 						</div>
 					</div>
+					<div class="tab-pane" id="menu-console">
+						<div id="console-main">
+							<button class="btn btn-primary glyphicon glyphicon-trash" id="console-clear" data-bind="click: clear"></button>
+							<div id="log-container" data-bind="foreach: logs">
+								<div class="log-line line-separated" data-bind="text: $data.log, css: { 'line-close': $data.closed }, click: $data.expand"></div>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 			<button class="btn btn-primary glyphicon glyphicon-remove-circle" data-toggle="modal" data-target="#menu-xs" id="menu-xs-close"></button>
@@ -75,6 +84,7 @@
 		<script src="js/models/entry.js" type="text/javascript" chatset="utf8"></script>
 		<script src="js/models/log.js" type="text/javascript" chatset="utf8"></script>
 		<script src="js/models/shell.js" type="text/javascript" chatset="utf8"></script>
+		<script src="js/models/console.js" type="text/javascript" chatset="utf8"></script>
 		<script src="js/client.js" type="text/javascript" chatset="utf8"></script>
 	</body>
 </html>
