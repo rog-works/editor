@@ -23,7 +23,6 @@ router.post('/', (req, res) => {
 });
 
 router.put(`/:path(${PATH_REGULAR})`, (req, res) => {
-	// console.log(`update able!! ${req.params.path} ${req.body.content}`);
 	console.log(`update able!! ${req.params.path}`);
 	Render.json(res, Entity.update(req.params.path, req.body.content));
 });
