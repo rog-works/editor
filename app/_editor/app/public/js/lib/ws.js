@@ -4,12 +4,14 @@ const RETRY_MAX = 5;
 
 class WS {
 	constructor (uri = 'ws://localhost:18082') {
+	    const self = this;
 		this.uri = uri;
 		this.handlers = {
 			message: [],
 			open: [],
-			close: [this._retry]
+			close: []
 		};
+		this.on('close', () => { return self._retry(); });
 		this.socket = WS.connect(this);
 	}
 	
@@ -32,10 +34,11 @@ class WS {
 			let socket = WS.connect(this);
 			if (socket !== null) {
 				this.socket = socket;
-				return;
+				return false;
 			}
 		}
 		console.error('Disconnected web socket. ' + this.uri);
+		return true;
 	}
 
 	on (tag, handler) {
