@@ -1,31 +1,64 @@
 'use strict';
 
 let Entity = require('../entities/entry');
-let Render = require('../helpers/render');
-let router = require('express').Router();
+let Router = require('../components/router');
 
 const PATH_REGULAR = '[\\w\\-.%]+';
 
-router.get('/', (req, res) => {
-	console.log('index able!! ' + req.query.dir);
-	let dir = req.query.dir || '';
-	Render.json(res, Entity.entries(dir));
-});
+class EntryController extends Router {
+	constructor () {
+		super();
+	}
+	
+	_keys () {
+		return Entity.keys();
+	}
+	
+	_routes () {
+		return [
+			{
+				method: 'get',
+				path: '/',
+				on: 'index',
+				args: ['query.dir']
+			},
+			{
+				method: 'get',
+				path: `/:path(${PATH_REGULAR})`,
+				on: 'show',
+				args: ['params.path']
+			},
+			{
+				method: 'post',
+				path: '/',
+				on: 'create',
+				args: ['body.path']
+			},
+			{
+				method: 'put',
+				path: `/:path(${PATH_REGULAR})`,
+				on: 'update',
+				args: ['params.path', 'body.content']
+			},
 
-router.get(`/:path(${PATH_REGULAR})`, (req, res) => {
-	console.log('show able!!', req.params.path);
-	Render.json(res, Entity.at(req.params.path));
-});
+		];
+	}
 
-router.post('/', (req, res) => {
-	console.log(`create able!! ${req.body.path}`);
-	Render.json(res, Entity.create(req.body.path));
-});
+	index (dir = '') {
+		this.view(Entity.entries(dir));
+	}
 
-router.put(`/:path(${PATH_REGULAR})`, (req, res) => {
-	console.log(`update able!! ${req.params.path}`);
-	Render.json(res, Entity.update(req.params.path, req.body.content));
-});
+	show (path) {
+		this.view(Entity.at(path));
+	}
+
+	create (path) {
+		this.view(Entity.create(req.body.path));
+	}
+
+	update (path, content) {
+		thiw.view(Entity.update(req.params.path, req.body.content));
+	});
 
 router.put(`/:path(${PATH_REGULAR})/rename`, (req, res) => {
 	console.log(`rename able!! ${req.params.path} ${req.query.to}`);
@@ -37,4 +70,4 @@ router.delete(`/:path(${PATH_REGULAR})`, (req, res) => {
 	Render.json(res, Entity.destroy(req.params.path));
 });
 
-module.exports = router;
+module.exports = (new EntryController()).bind();
