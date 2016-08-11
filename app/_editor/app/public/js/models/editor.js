@@ -13,16 +13,16 @@ class Editor {
 
 	_configure (ext) {
 		const config = {
-			sh: {mode: 'sh', tabs: 4, softTabs: true},
-			py: {mode: 'python', tabs: 4, softTabs: true},
-			php: {mode: 'php', tabs: 4, softTabs: true},
-			css: {mode: 'css', tabs: 4, softTabs: true},
-			html: {mode: 'html', tabs: 4, softTabs: true},
-			json: {mode: 'json', tabs: 4, softTabs: true},
-			js: {mode: 'javascript', tabs: 4, softTabs: true},
-			rb: {mode: 'ruby', tabs: 2, softTabs: false},
-			yml: {mode: 'yaml', tabs: 2, softTabs: false},
-			yaml: {mode: 'yaml', tabs: 2, softTabs: false}
+			sh: {mode: 'sh', tabs: 4, softTabs: false},
+			py: {mode: 'python', tabs: 4, softTabs: false},
+			php: {mode: 'php', tabs: 4, softTabs: false},
+			css: {mode: 'css', tabs: 4, softTabs: false},
+			html: {mode: 'html', tabs: 4, softTabs: false},
+			json: {mode: 'json', tabs: 4, softTabs: false},
+			js: {mode: 'javascript', tabs: 4, softTabs: false},
+			rb: {mode: 'ruby', tabs: 2, softTabs: true},
+			yml: {mode: 'yaml', tabs: 2, softTabs: true},
+			yaml: {mode: 'yaml', tabs: 2, softTabs: true}
 		};
 		return (ext in config) ? config[ext] : config.sh;
 	}
