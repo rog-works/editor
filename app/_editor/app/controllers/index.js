@@ -1,9 +1,22 @@
 'use strict'
 
-let router = require('express').Router();
+const Controller = require('../components/controller');
+const Router = require('../components/router');
 
-router.get('/', (request, response) => {
-	response.sendFile('/opt/app/_editor/app/views/index.html');
-});
+class IndexController extends Controller {
+	constructor () {
+		super();
+	}
 
-module.exports = router;
+	index () {
+		this.res.sendFile('/opt/app/_editor/app/views/index.html');
+	}
+
+	routes () {
+		return [
+			Router.get('/').on('index')
+		];
+	}
+}
+
+module.exports = Router.bind(new IndexController());

@@ -1,47 +1,14 @@
 'use strict';
 
-let Entity = require('../entities/entry');
-let Router = require('../components/router');
+const Entity = require('../entities/entry');
+const Controller = require('../components/controller');
+const Router = require('../components/router');
 
 const PATH_REGULAR = '[\\w\\-.%]+';
 
-class EntryController extends Router {
+class EntryController extends Controller {
 	constructor () {
 		super();
-	}
-	
-	_keys () {
-		return Entity.keys();
-	}
-	
-	_routes () {
-		return [
-			{
-				method: 'get',
-				path: '/',
-				on: 'index',
-				args: ['query.dir']
-			},
-			{
-				method: 'get',
-				path: `/:path(${PATH_REGULAR})`,
-				on: 'show',
-				args: ['params.path']
-			},
-			{
-				method: 'post',
-				path: '/',
-				on: 'create',
-				args: ['body.path']
-			},
-			{
-				method: 'put',
-				path: `/:path(${PATH_REGULAR})`,
-				on: 'update',
-				args: ['params.path', 'body.content']
-			},
-
-		];
 	}
 
 	index (dir = '') {
@@ -53,21 +20,49 @@ class EntryController extends Router {
 	}
 
 	create (path) {
-		this.view(Entity.create(req.body.path));
+		this.view(Entity.create(path));
 	}
 
 	update (path, content) {
-		thiw.view(Entity.update(req.params.path, req.body.content));
-	});
+		this.view(Entity.update(path, content));
+	}
 
-router.put(`/:path(${PATH_REGULAR})/rename`, (req, res) => {
-	console.log(`rename able!! ${req.params.path} ${req.query.to}`);
-	Render.json(res, Entity.rename(req.params.path, req.query.to));
-});
+	destroy (path) {
+		this.view(Entity.destroy(path));
+	}
 
-router.delete(`/:path(${PATH_REGULAR})`, (req, res) => {
-	console.log('destroy able!!', req.params.path);
-	Render.json(res, Entity.destroy(req.params.path));
-});
+	rename (path, to) {
+		this.view(Entity.rename(path, to));
+	}
 
-module.exports = (new EntryController()).bind();
+	keys () {
+		return Entity.keys();
+	}
+
+	routes () {
+		return [
+			Router.get('/')
+				.query('dir')
+				.on('index'),
+			Router.get(`/:path(${PATH_REGULAR})`)
+				.params('path')
+				.on('show'),
+			Router.post('/')
+				.body('path')
+				.on('create'),
+			Router.put(`/:path(${PATH_REGULAR})`)
+				.params('path')
+				.body('content')
+				.on('update'),
+			Router.delete(`/:path(${PATH_REGULAR})`)
+				.params('path')
+				.on('destroy'),
+			Router.put(`/:path(${PATH_REGULAR})/rename`)
+				.params('path')
+				.query('to')
+				.on('rename')
+		];
+	}
+}
+
+module.exports = Router.bind(new EntryController());

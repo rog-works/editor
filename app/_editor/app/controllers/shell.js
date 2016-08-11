@@ -1,17 +1,30 @@
 'use strict';
 
-let Entity = require('../entities/shell');
-let Render = require('../helpers/render');
-let router = require('express').Router();
+const Entity = require('../entities/shell');
+const Controller = require('../components/controller');
+const Router = require('../components/router');
 
-router.post('/', (req, res) => {
-	console.log(`index able!! ${req.body.query} ${req.query.dir}`);
-	let dir = req.query.dir || '';
-	let args = req.body.query.split(' ');
-	let command = args.shift();
-	let options = {cwd: `/opt/app${dir}`};
-	let result = (new Entity()).run(command, args, options);
-	Render.json(res, result);
-});
+class ShellController extends Controller {
+	constructor () {
+		super();
+	}
 
-module.exports = router;
+	run (query, dir = '') {
+		let args = query.split(' ');
+		let command = args.shift();
+		let options = {cwd: `/opt/app${dir}`};
+		let result = (new Entity()).run(command, args, options);
+		this.view(result);
+	}
+
+	routes () {
+		return [
+			Router.post('/')
+				.body('query')
+				.query('dir')
+				.on('run')
+		];
+	}
+}
+
+module.exports = Router.bind(new ShellController());

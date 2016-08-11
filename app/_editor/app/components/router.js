@@ -1,67 +1,41 @@
 'use strict';
 
-const Projector = require('../components/projector');
-const Render = require('../helpers/render');
-
 class Router {
-	constructor () {
-		this.req = null;
-		this.res = null;
+	static get (path) {
+		return (new RouteBuilder('get')).path(path);
 	}
 
-	bind () {
-		const self = this;
-		const router = require('express').Router();
-		for (const route of self._routes()) {
-			router[route.method](route.path, (req, res) => {
-				self._dispatch(route.on, route.args, req, res);
+	static post (path) {
+		return (new RouteBuilder('post')).path(path);
+	}
+
+	static put (path) {
+		return (new RouteBuilder('put')).path(path);
+	}
+
+	static delete (path) {
+		return (new RouteBuilder('delete')).path(path);
+	}
+
+	static bind (controller) {
+		const expressRouter = require('express').Router();
+		for (const route of controller.routes()) {
+			expressRouter[route.method](route.path, (req, res) => {
+				Router._dispatch(controller, route, req, res);
 			});
 		}
-		return router;
+		return expressRouter;
 	}
 
-	view (response, out = 'json', filter = null) {
-		const keys = filter || this._keys().join('|');
-		const accept = keys.split('|');
-		Render[out](this.res, Projector.select(response, accept));
+	static _dispatch (controller, route, req, res) {
+		controller.req = req;
+		controller.res = res;
+		const args = Router._parseArgs(route.args, req);
+		console.log('Dispached.', route.on, args);
+		controller[route.on](...args);
 	}
 
-	_keys () {
-		return ['id'];
-	}
-
-	_routes () {
-		return [
-			{
-				method: 'get',
-				on: 'index',
-				path: '/.:ext(json|csv)',
-				args: ['params.ext', 'query.filter']
-			},
-			{
-				method: 'get',
-				on: 'show',
-				path: '/:id([\\d]+).:ext(json|csv)',
-				args: ['params.id', 'params.ext', 'query.filter']
-			},
-			{
-				method: 'delete',
-				on: 'destroy',
-				path: '/:id([\\d]+).:ext(json|csv)',
-				args: ['params.id', 'params.ext', 'query.filter']
-			},
-		];
-	}
-
-	_dispatch (on, argKeys, req, res) {
-		this.req = req;
-		this.res = res;
-		const args = this._parseArgs(argKeys, this.req);
-		console.log('Dispached.', on, args);
-		this[on](...args);
-	}
-
-	_parseArgs (argKeys, req) {
+	static _parseArgs (argKeys, req) {
 		let args = [];
 		let curr = null;
 		for (const keys of argKeys) {
@@ -79,6 +53,49 @@ class Router {
 			}
 		}
 		return args;
+	}
+}
+
+class RouteBuilder {
+	constructor (method) {
+		this._method = method;
+		this._path = '/';
+		this._on = 'index';
+		this._args = [];
+	}
+
+	path (path) {
+		this._path = path;
+		return this;
+	}
+
+	params (key) {
+		this._args.push(`params.${key}`);
+		return this;
+	}
+
+	query (key) {
+		this._args.push(`query.${key}`);
+		return this;
+	}
+
+	body (key) {
+		this._args.push(`body.${key}`);
+		return this;
+	}
+
+	on (listen) {
+		this._on = listen;
+		return this._build();
+	}
+
+	_build () {
+		return {
+			method: this._method,
+			path: this._path,
+			on: this._on,
+			args: this._args
+		};
 	}
 }
 
