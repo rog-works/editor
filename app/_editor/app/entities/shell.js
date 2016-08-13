@@ -2,10 +2,10 @@
 
 let ProcessProvider = require('../helpers/processprovider');
 
-/** current working directory */
+/** XXX current working directory */
 const CURRENT_DIR = '/opt/app';
 
-/** stdout */
+/** XXX stdout */
 const LOG_PATH = '/var/log/app/editor-shell.log';
 
 class Shell {

@@ -1,4 +1,5 @@
 'use strict';
+
 class _Log {
 	constructor () {
 		this.logs = ko.observableArray(self.logs);

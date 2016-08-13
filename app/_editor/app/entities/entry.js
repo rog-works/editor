@@ -1,25 +1,24 @@
 'use strict';
 
-let FileProvider = require('../helpers/fileprovider');
-let Path = require('path');
+const FileProvider = require('../helpers/fileprovider');
+const Path = require('path');
 
 /** type defines */
 const TYPE_FILE = 'file';
 const TYPE_DIRECTORY = 'directory';
 
-/** root directory */
+/** XXX root directory */
 const ROOT_DIRECTORY = '/opt/app';
 
 class Entry {
 	/**
-	 * Create entry
-	 * @param string realPath Entry real path
-	 * @param strring type Entry type
-	 * @param string content Entry content
-	 * @return Entry Entry
+	 * Create instance
+	 * @param string realPath real path
+	 * @param strring type type
+	 * @param string content content
 	 */
 	constructor (realPath, type, content) {
-		let relPath = Entry._toRelativePath(realPath);
+		const relPath = Entry._toRelativePath(realPath);
 		this.name = Path.basename(realPath);
 		this.path = relPath;
 		this.dir = Path.dirname(relPath);
@@ -27,11 +26,14 @@ class Entry {
 		this.content = content;
 	}
 
-	/** Entry keys */
+	/**
+	 * Get keys
+	 * @return string[] keys
+	 */
 	static keys () {
 		return ['name', 'path', 'dir', 'type', 'content'];
 	}
-	
+
 	/**
 	 * Get all entries from '/opt/app'
 	 * @param string relDirPath Target directory relative path from '/opt/app'
@@ -39,10 +41,10 @@ class Entry {
 	 */
 	static entries (relDirPath = '') {
 		try {
-			let realDirPath = Entry._toRealPath(relDirPath);
+			const realDirPath = Entry._toRealPath(relDirPath);
 			return FileProvider.entries(realDirPath, false).map((self) => {
-				let relPath = Entry._toRelativePath(self);
-				let type = Entry._getType(self);
+				const relPath = Entry._toRelativePath(self);
+				const type = Entry._getType(self);
 				return new Entry(self, type, '');
 			});
 		} catch (error) {
@@ -50,7 +52,7 @@ class Entry {
 			return [];
 		}
 	}
-	
+
 	/**
 	 * Find at entry
 	 * @param string relPath Entry relative path from '/opt/app'
@@ -58,10 +60,10 @@ class Entry {
 	 */
 	static at (relPath) {
 		try {
-			let realPath = Entry._toRealPath(relPath);
-			let type = Entry._getType(realPath);
+			const realPath = Entry._toRealPath(relPath);
+			const type = Entry._getType(realPath);
 			if (type === TYPE_FILE) {
-				let content = FileProvider.at(realPath);
+				const content = FileProvider.at(realPath);
 				return new Entry(realPath, type, content);
 			} else {
 				// XXX
@@ -72,7 +74,7 @@ class Entry {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Create by path
 	 * @param string relPath Entry relative path from '/opt/app'
@@ -80,7 +82,7 @@ class Entry {
 	 */
 	static create (relPath) {
 		try {
-			let realPath = Entry._toRealPath(relPath);
+			const realPath = Entry._toRealPath(relPath);
 			FileProvider.create(realPath, '');
 			return new Entry(realPath, TYPE_FILE, '');
 		} catch (error) {
@@ -88,7 +90,7 @@ class Entry {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Update by path and content body
 	 * @param string relPath Entry relative path from '/opt/app'
@@ -97,7 +99,7 @@ class Entry {
 	 */
 	static update (relPath, content) {
 		try {
-			let realPath = Entry._toRealPath(relPath);
+			const realPath = Entry._toRealPath(relPath);
 			FileProvider.update(realPath, content);
 			return new Entry(realPath, TYPE_FILE, content);
 		} catch (error) {
@@ -105,7 +107,7 @@ class Entry {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Rename by path and to path
 	 * @param string relPath Entry relative path from '/opt/app'
@@ -121,7 +123,7 @@ class Entry {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Destroy by path
 	 * @param string relPath Entry relative path from '/opt/app'
