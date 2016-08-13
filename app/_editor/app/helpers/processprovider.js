@@ -5,7 +5,7 @@ const spawn = require('child_process').spawn;
 class ProcessProvider {
 	/**
 	 * Create instance
-	 * @param string command target command
+	 * @param string command Target command
 	 */
 	constructor (command) {
 		this._command = command;
@@ -20,7 +20,7 @@ class ProcessProvider {
 
 	/**
 	 * Added argument
-	 * @param string/array arg argument
+	 * @param string/array arg Argument
 	 * @param bool available Added condition
 	 * @return ProcessProvider this
 	 */
@@ -39,8 +39,9 @@ class ProcessProvider {
 
 	/**
 	 * Setup options
-	 * @param object options see child_process.spawn
+	 * @param object options ChildProcess options
 	 * @return ProcessProvider this
+	 * @see child_process.spawn
 	 */
 	option (options) {
 		this._options = options;
@@ -49,8 +50,8 @@ class ProcessProvider {
 
 	/**
 	 * Setup event handler
-	 * @oaram string event tag. 'stdout' or 'stderr'
-	 * @param function handler handling function
+	 * @oaram string Event tag. 'stdout' or 'stderr'
+	 * @param function handler Handling function
 	 * @return ProcessProvider this
 	 */
 	on (tag, handler) {
@@ -60,7 +61,7 @@ class ProcessProvider {
 
 	/**
 	 * The default handler for the stdout event
-	 * @oaram string output stdout
+	 * @param string output stdout
 	 */
 	_stdout (data) {
 		console.log(data);
@@ -68,7 +69,7 @@ class ProcessProvider {
 
 	/**
 	 * The default handler for the stderr event
-	 * @oaram string output stderr
+	 * @param string output stderr
 	 */
 	_stderr (data) {
 		console.log(data);
@@ -76,7 +77,7 @@ class ProcessProvider {
 
 	/**
 	 * Run the query
-	 * @return bool true
+	 * @return bool Run result
 	 */
 	run () {
     	console.log('executed', this._command, this._args);
