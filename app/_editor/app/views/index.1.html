@@ -4,53 +4,63 @@
 		<title>Editor</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
-		<link href="..\public\css\sanitize.css" rel="stylesheet">
-		<link href="..\public\css\editor.css" rel="stylesheet">
-		<style type="text/css" charset="utf8">
-			.entry-depth0 {
-				padding-left: inherit;
-			}
-			.entry-depth1 {
-				padding-left: 20px;
-			}
-			.entry-depth2 {
-				padding-left: 40px;
-			}
-			.list-group-item.entry-item:nth-child(even) {
-				background-color: #eee;
-			}
-		</style>
+		<link rel="stylesheet" chatset="utf8" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+		<link href="../public/vendors/normalize.css" rel="stylesheet">
+		<link href="../public/css/style.css" rel="stylesheet">
 	</head>
-	<body>
-		<ul class="list-group" id="entry-main">
-			<li class="list-group-item entry-item entry-depth0">
-				<i class="glyphicon glyphicon-option-vertical"></i>
-				<a>/file</a>
-			</li>
-			<li class="list-group-item entry-item entry-depth0">
-				<i class="glyphicon glyphicon-folder-open"></i>
-				<a>/dir</a>
-			</li>
-			<li class="list-group-item entry-item entry-depth1">
-				<i class="glyphicon glyphicon-option-vertical"></i>
-				<a>/dir/file</a>
-			</li>
-			<li class="list-group-item entry-item entry-depth1">
-				<i class="glyphicon glyphicon-folder-open"></i>
-				<a>/dir/dir</a>
-			</li>
-			<li class="list-group-item entry-item entry-depth2">
-				<i class="glyphicon glyphicon-option-vertical"></i>
-				<a>/dir/dir/file</a>
-			</li>
-		</ul>
-		<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+	<body class="bc1 fc1">
+		<div class="fit">
+			<div class="page bc2 left flex-w-32 fill-h hide">
+				<div id="editor" class="fill"></div>
+			</div>
+			<div class="page bc2 left flex-w-32 fill-h">
+				<div class="fill scroll hide-scroll" data-bind="foreach: entries">
+					<div class="bc2 fill-w h0 table stripe depth-1">
+						<i class="wh0 cell center fa fa-folder-open"></i>
+						<i class="fc4 wh0 cell center fa fa-caret-left"></i>
+						<i class="wh0 cell center fa fa-pencil hide"></i>
+						<i class="wh0 cell center fa fa-remove hide"></i>
+						<a class="h0 cell middle">name</a>
+					</div>
+					<div class="bc2 fill-w h0 table stripe depth-2">
+						<i class="fc4 wh0 cell center fa fa-caret-right"></i>
+						<i class="wh0 cell center fa fa-pencil"></i>
+						<i class="wh0 cell center fa fa-remove"></i>
+						<a class="h0 cell middle">name</a>
+					</div>
+				</div>
+			</div>
+			<div class="page bc2 left flex-w-32 fill-h hide">
+			</div>
+			<div class="page bc2 left flex-w-32 fill-h hide">
+			</div>
+			<div class="tool right w1 fill-h">
+				<div class="bc1 wh1 table active"><i class="cell center fa fa-pencil"></i></div>
+				<div class="bc1 wh1 table"><i class="cell center fa fa-sitemap"></i></div>
+				<div class="bc1 wh1 table"><i class="cell center fa fa-terminal"></i></div>
+				<div class="bc1 wh1 table"><i class="cell center fa fa-commenting"></i></div>
+				<div class="bc1 wh1 table"><i class="cell center fa fa-info"></i></div>
+			</div>
+		</div>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.0/ace.js"></script>
+		<script src="../public/vendors/jquery-2.2.1.min.js"></script>
 		<script src="http://cdnjs.cloudflare.com/ajax/libs/knockout/2.3.0/knockout-min.js"></script>
-		<script type="text/javascript" charset="utf8">
+		<script type="text/javascript" chatset="utf8">
 			'use strict';
-			
+			$(() => {
+				ace.edit('editor');
+				const onResize = () => {
+					const w = window.innerWidth;
+					const h = window.innerHeight;
+					const fit = $('.fit');
+					fit.width(w);
+					fit.height(h);
+					$('.flex-w-32').width(w - 32);
+	    			// ace.edit('editor').resize();
+				};
+				onResize();
+				$(window).on('resize', onResize);
+			});
 		</script>
 	</body>
 </html>
