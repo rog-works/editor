@@ -5,9 +5,9 @@ class Console extends _Log {
 		super();
 	}
 
-	static init (id = 'console-main') {
+	static init (id = 'page-console') {
 		const self = new Console();
-		ko.applyBindings(self, document.getElementById(id));
+		// ko.applyBindings(self, document.getElementById(id));
 		self.bind();
 		return self;
 	}

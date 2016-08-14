@@ -6,11 +6,11 @@ class Log extends _Log {
 		this.socket = null;
 	}
 
-	static init (id = 'log-main') {
+	static init (id = 'page-log') {
 		const self = new Log();
 		// XXX depends on APP...
 		APP.ws.on('message', (msg) => { return self._onMessage(msg); });
-		ko.applyBindings(self, document.getElementById(id));
+		// ko.applyBindings(self, document.getElementById(id));
 		return self;
 	}
 

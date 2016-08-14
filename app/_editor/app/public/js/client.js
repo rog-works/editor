@@ -1,37 +1,49 @@
 'use strict';
 
-let APP = {};
+class Application {
+	constructor () {
+		this.ws = null;
+		this.tool = null;
+		this.console = null;
+		this.editor = null;
+		this.entry = null;
+		this.shell = null;
+		this.log = null;
+	}
+
+	load (id = 'main') {
+		this.ws = new WS();
+		this.tool = Tool.init();
+		this.console = Console.init();
+		this.editor = Editor.init();
+		this.entry = Entry.init();
+		this.shell = Shell.init();
+		this.log = Log.init();
+		ko.applyBindings(this, document.getElementById(id));
+	}
+};
+let APP = new Application();
 $(() => {
 	try {
 		// XXX 
-		$.extend(APP, {
-			ws: new WS(),
-		});
-		$.extend(APP, {
-			console: Console.init(),
-			editor: Editor.init(),
-			entry: Entry.init(),
-			shell: Shell.init(),
-			log: Log.init()
-		});
+		APP.load();
 	} catch (error) {
 		console.error(error.message, error.stack);
 	}
-	let onRotate = () => {
+
+	const onResize = () => {
 		// XXX Diviated with the software keyboard is Displayed
-	    let h = window.innerHeight;
-	    let ids = [
-	        '#content',
-	        '#menu-xs'
-        ];
-	    for (let id of ids) {
-	        $(id).height(h);
-	    }
-	    // XXX
-	    APP.editor._editor().resize();
+		const w = window.innerWidth;
+		const h = window.innerHeight;
+		const fit = $('.fit');
+		fit.width(w);
+		fit.height(h);
+		$('.flex-w-32').width(w - 32);
+		// XXX
+		APP.editor._editor().resize();
 	};
-	onRotate();
-	
+	onResize();
+
 	// handling for resize event
-	$(window).on('resize', onRotate);
+	$(window).on('resize', onResize);
 });

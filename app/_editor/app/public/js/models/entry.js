@@ -12,11 +12,18 @@ class Entry {
 		this.icon = ko.observable(Entry.toIcon(this.type));
 		this.selected = ko.observable(false);
 		this.closed = ko.observable(0);
-		this.edited = true;
+		this.edited = ko.observable(false);
 		this.attr = {
 			dir: entity.dir,
 			depth: depth
 		};
+	}
+
+	static init (id = 'page-entry') {
+		const self = new EntryRoot();
+		// ko.applyBindings(self, document.getElementById(id));
+		self.load();
+		return self;
 	}
 
 	static send (url, data, callback) {
@@ -32,12 +39,14 @@ class Entry {
 		$.ajax($.extend(_data, data));
 	}
 
-	static update (path, content) {
-		const url = '/' + encodeURIComponent(path);
-		Entry.send(url, {type: 'PUT', data: {content: content}}, (entity) => {
-			// XXX
-			alert(`${path} entry updated!`);
-			console.log(entity);
+	load (dir = '/') {
+		const url = '/?dir=' + encodeURIComponent(dir);
+		Entry.send(url, {}, (entities) => {
+			APP.entry.entries.removeAll();
+			for (const entry of Entry.toEntries(entities)) {
+				APP.entry.entries.push(entry);
+			}
+			APP.entry.entries.push(new EntryAdd());
 		});
 	}
 
@@ -45,6 +54,15 @@ class Entry {
 		Entry.send('/', {type: 'POST', data: {path: path}}, (entity) => {
 			const entry = Entry.factory(entity);
 			APP.entry.entries.push(entry);
+		});
+	}
+
+	static update (path, content) {
+		const url = '/' + encodeURIComponent(path);
+		Entry.send(url, {type: 'PUT', data: {content: content}}, (entity) => {
+			// XXX
+			alert(`${path} entry updated!`);
+			console.log(entity);
 		});
 	}
 
@@ -79,23 +97,22 @@ class Entry {
 		});
 	}
 
-	static init (id = 'entry-main') {
-		const self = new EntryRoot();
-		self.entries = ko.observableArray(self.entries);
-		ko.applyBindings(self, document.getElementById(id));
-		self.load();
-		return self;
+	allow () {
+		this.edited(!this.edited());
 	}
 
-	load (dir = '/') {
-		const url = '/?dir=' + encodeURIComponent(dir);
-		Entry.send(url, {}, (entities) => {
-			APP.entry.entries.removeAll();
-			for (const entry of Entry.toEntries(entities)) {
-				APP.entry.entries.push(entry);
-			}
-			APP.entry.entries.push(new EntryAdd());
+	static toEntries (entities) {
+		return entities.map((self) => {
+			return Entry.factory(self);
 		});
+	}
+
+	static factory(entry) {
+		if (entry.type === 'file') {
+			return new EntryFile(entry);
+		} else {
+			return new EntryDirectory(entry);
+		}
 	}
 
 	static validSavePath (path) {
@@ -119,26 +136,12 @@ class Entry {
 		return false;
 	}
 
-	static toEntries (entities) {
-		return entities.map((self) => {
-			return Entry.factory(self);
-		});
-	}
-
-	static factory(entry) {
-		if (entry.type === 'file') {
-			return new EntryFile(entry);
-		} else {
-			return new EntryDirectory(entry);
-		}
-	}
-
 	static toIcon (type) {
 		const classes = {
-			file: 'glyphicon-option-vertical',
-			directory: 'glyphicon-folder-open',
+			file: '',
+			directory: 'fa-folder-open',
 			// XXX
-			directoryClose:  'glyphicon-folder-close'
+			directoryClose:  'fa-folder'
 		};
 		return classes[type];
 	}
@@ -147,7 +150,7 @@ class Entry {
 class EntryRoot extends Entry {
 	constructor (entity) {
 		super();
-		this.entries = [];
+		this.entries = ko.observableArray([]);
 	}
 }
 
@@ -160,7 +163,6 @@ class EntryAdd extends Entry {
 			name: '- create file -',
 			dir: ''
 		});
-		this.edited = false;
 	}
 
 	click () {
@@ -177,17 +179,21 @@ class EntryFile extends Entry {
 		super.extend(entity);
 	}
 
-	load (path = '/') {
+	click () {
+		this._load(this.path);
+	}
+
+	_load (path = '/') {
 		const url = '/' + encodeURIComponent(path);
 		Entry.send(url, {}, (entity) => {
 			// XXX auto closing to focus editor
 			$('#menu-xs-close').click();
 			APP.editor.load(entity.path, entity.content);
-			this.activate();
+			this._activate();
 		});
 	}
 
-	activate () {
+	_activate () {
 		for (const entry of APP.entry.entries()) {
 			if (entry.selected()) {
 				entry.selected(false);
@@ -195,10 +201,6 @@ class EntryFile extends Entry {
 			}
 		}
 		this.selected(!this.selected());
-	}
-
-	click () {
-		this.load(this.path);
 	}
 }
 
@@ -209,7 +211,14 @@ class EntryDirectory extends Entry {
 		this.expanded = true;
 	}
 
-	toggle (dir, expanded) {
+	click () {
+		this.expanded = !this.expanded;
+		const nextIcon = Entry.toIcon(this.expanded ? 'directory' : 'directoryClose');
+		this.icon(nextIcon);
+		this._toggle(this.path, this.expanded);
+	}
+
+	_toggle (dir, expanded) {
 		for (const entry of APP.entry.entries()) {
 			if (entry.attr.dir.startsWith(dir)) {
 				if (expanded && entry.closed() > 0) {
@@ -219,12 +228,5 @@ class EntryDirectory extends Entry {
 				}
 			}
 		}
-	}
-
-	click () {
-		this.expanded = !this.expanded;
-		const nextIcon = Entry.toIcon(this.expanded ? 'directory' : 'directoryClose');
-		this.icon(nextIcon);
-		this.toggle(this.path, this.expanded);
 	}
 }

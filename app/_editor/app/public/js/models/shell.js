@@ -10,11 +10,11 @@ class Shell extends _Log {
 		this.history = ko.observableArray([]);
 	}
 
-	static init (id = 'shell-main') {
+	static init (id = 'page-shell') {
 		const self = new Shell();
 		// XXX depends on APP...
 		APP.ws.on('message', (msg) => { return self._onMessage(msg); });
-		ko.applyBindings(self, document.getElementById(id));
+		// ko.applyBindings(self, document.getElementById(id));
 		return self;
 	}
 
@@ -22,6 +22,11 @@ class Shell extends _Log {
 		if (e.keyCode !== KEY_CODE_ENTER) {
 			return true;
 		}
+		// XXX
+		return APP.shell._exec();
+	}
+
+	_exec () {
 		const query = this.query();
 		if (query.length === 0) {
 			return true;

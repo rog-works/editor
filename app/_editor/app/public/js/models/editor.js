@@ -2,14 +2,48 @@
 
 class Editor {
 	constructor () {
-		this.path = ko.observable('#');
+		this.path = '#';
 	}
 
-	static init () {
+	static init (id = 'page-editor') {
 		let self = new Editor();
-		ko.applyBindings(self, document.getElementById('editor-save-xs'));
+		// ko.applyBindings(self, document.getElementById(id));
 		self.load();
 		return self;
+	}
+
+	load (path = '#', content = '') {
+		const ext = path.substr(path.lastIndexOf('.') + 1);
+		const config = this._configure(ext);
+		const editor = this._editor();
+		const session = editor.getSession();
+		session.setValue(content);
+		session.setTabSize(config.tabs);
+		session.setUseSoftTabs(config.softTabs);
+		session.setMode(this._toMode(config.mode));
+		this.path = path;
+		// XXX
+		APP.tool.activate('editor');
+		editor.focus();
+	}
+
+	click (self, e) {
+		if (e.keyCode !== 999) {
+			console.log(e.keyCode);
+			return true;
+		}
+		return APP.editor._save();
+	}
+
+	_save () {
+		if (Entry.validSavePath(this.path)) {
+			Entry.update(this.path, this._content());
+		}
+		return false;
+	}
+
+	_content () {
+		return this._editor().getSession().getValue();
 	}
 
 	_configure (ext) {
@@ -34,28 +68,5 @@ class Editor {
 
 	_toMode (mode) {
 		return `ace/mode/${mode}`;
-	}
-
-	load (path = '#', content = '') {
-		const ext = path.substr(path.lastIndexOf('.') + 1);
-		const config = this._configure(ext);
-		let editor = this._editor();
-		let session = editor.getSession();
-		session.setValue(content);
-		session.setTabSize(config.tabs);
-		session.setUseSoftTabs(config.softTabs);
-		session.setMode(this._toMode(config.mode));
-		this.path(path);
-		editor.focus();
-	}
-
-	save () {
-		if (Entry.validSavePath(this.path())) {
-			Entry.update(this.path(), this.content());
-		}
-	}
-
-	content () {
-		return this._editor().getSession().getValue();
 	}
 }
