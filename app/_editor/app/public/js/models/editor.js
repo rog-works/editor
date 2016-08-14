@@ -35,7 +35,7 @@ class Editor {
 		return APP.editor._save();
 	}
 
-	_save () {
+	save () {
 		if (Entry.validSavePath(this.path)) {
 			Entry.update(this.path, this._content());
 		}
