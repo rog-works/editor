@@ -1,4 +1,4 @@
-/* align settings */
+/* align styles */
 .auto {
 	margin: 0 auto;
 }
@@ -31,7 +31,7 @@
 	vertical-align: middle;
 }
 
-/* size settings */
+/* size styles */
 .fill {
 	width: 100%;
 	height: 100%;
@@ -116,7 +116,7 @@
 	box-sizing: border-box;
 }
 
-/* color settings */
+/* color styles */
 a.fc1,
 a.fc1:hover,
 a.fc1:visited,
@@ -188,7 +188,7 @@ a.fc1:active {
 	background-color: #282;
 }
 
-/* display settings */
+/* display styles */
 .hide {
 	display: none;
 }
@@ -197,7 +197,21 @@ a.fc1:active {
 	overflow: scroll;
 }
 
-.scroll.hide-scroll::-webkit-scrollbar {
+.scroll-x {
+	overflow-x: scroll;
+	/* XXX */
+	overflow-x: hidden;
+}
+
+.scroll-y {
+	overflow-y: scroll;
+	/* XXX */
+	overflow-x: hidden;
+}
+
+.scroll.hide-scroll::-webkit-scrollbar,
+.scroll-x.hide-scroll::-webkit-scrollbar,
+.scroll-y.hide-scroll::-webkit-scrollbar {
 	display: none;
 }
 
@@ -222,6 +236,22 @@ a.fc1:active {
 .space-less {
 	margin: 0;
 	padding: 0;
+}
+
+.bc1.underline {
+	border-bottom: solid 1px #222;
+}
+
+.bc2.underline {
+	border-bottom: solid 1px #444;
+}
+
+.bc3.underline {
+	border-bottom: solid 1px #666;
+}
+
+.bc4.underline {
+	border-bottom: solid 1px #888;
 }
 
 /* depth styles */

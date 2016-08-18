@@ -3,7 +3,8 @@
 	<head>
 		<title>Editor</title>
 		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+		<!--<meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, maximum-scale=1.0, user-scalable=yes">-->
 		<link rel="stylesheet" chatset="utf8" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
 		<link rel="stylesheet" chatset="utf8" href="vendors/normalize.css">
 		<link rel="stylesheet" chatset="utf8" href="css/style.css">
@@ -14,8 +15,8 @@
 				<div id="editor" class="fill" data-bind="valueUpdate: 'keypress', event: { keypress: editor.click }"></div>
 			</div>
 			<div id="page-entry" class="page bc2 left flex-w-32 fill-h hide" data-bind="css: { hide: tool.page() !== 'entry' }">
-				<div class="fill scroll hide-scroll" data-bind="foreach: entry.entries">
-					<div class="bc2 fill-w h0 table stripe" data-bind="css: { active: $data.selected, hide: $data.closed() }, attr: $data.attr">
+				<div class="fill scroll-y hide-scroll" data-bind="foreach: entry.entries">
+					<div class="bc2 fill-w h0 table underline" data-bind="css: { active: $data.selected, hide: $data.closed() }, attr: $data.attr">
 						<i class="wh0 cell center fa" data-bind="css: $data.icon"></i>
 						<i class="fc4 wh0 cell center fa" data-bind="css: { 'fa-caret-left': $data.edited() === false, 'fa-caret-right': $data.edited() }, click: $data.allow"></i>
 						<i class="wh0 cell center fa fa-pencil" data-bind="css: { hide: $data.edited() === false }, click: $data.rename"></i>
@@ -37,7 +38,7 @@
 					<div class="log-line" data-bind="text: $data.log, css: { 'line-close': $data.closed, 'line-separated': $data.separated }, click: $data.expand"></div>
 				</div>
 			</div>
-			<div id="page-log" class="page bc2 left flex-w-32 fill-h hide" data-bind="css: { hide: tool.page() !== 'log' }">
+			<div id="page-log" class="page bc2 left flex-w-32 fill-h scroll hide-scroll hide" data-bind="css: { hide: tool.page() !== 'log' }">
 				<div class="wh1 right table">
 					<i class="wh1 cell center fa fa-remove" data-bind="click: log.clear.bind($data.log)"></i>
 				</div>
@@ -45,7 +46,7 @@
 					<div class="log-line line-separated" data-bind="text: $data.log, css: { 'line-close': $data.closed }, click: $data.expand"></div>
 				</div>
 			</div>
-			<div id="page-console" class="page bc2 left flex-w-32 fill-h hide" data-bind="css: { hide: tool.page() !== 'console' }">
+			<div id="page-console" class="page bc2 left flex-w-32 fill-h scroll hide-scroll hide" data-bind="css: { hide: tool.page() !== 'console' }">
 				<div class="wh1 right table">
 					<i class="wh1 cell center fa fa-remove" id="console-clear" data-bind="click: console.clear.bind($data.console)"></i>
 				</div>
