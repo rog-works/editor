@@ -27,10 +27,6 @@ class Console extends _Log {
 	}
 
 	on (...args) {
-		const head = args.shift();
-		this.line(head);
-		for (const arg of args) {
-			return this.put(arg);
-		}
+		this.line(args.join(' '));
 	}
 }

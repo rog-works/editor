@@ -4,13 +4,12 @@
 		<title>Editor</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-		<!--<meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, maximum-scale=1.0, user-scalable=yes">-->
 		<link rel="stylesheet" chatset="utf8" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
 		<link rel="stylesheet" chatset="utf8" href="vendors/normalize.css">
 		<link rel="stylesheet" chatset="utf8" href="css/style.css">
 	</head>
 	<body class="bc1 fc1">
-		<div id="main" class="fit">
+		<div id="main" class="fit" data-bind="style: { width: style.width, height: style.height }">
 			<div id="page-editor" class="page bc2 left flex-w-32 fill-h" data-bind="css: { hide: tool.page() !== 'editor' }">
 				<div id="editor" class="fill" data-bind="valueUpdate: 'keypress', event: { keypress: editor.click }"></div>
 			</div>
@@ -54,12 +53,12 @@
 					<div class="log-line line-separated" data-bind="text: $data.log, css: { 'line-close': $data.closed }, click: $data.expand"></div>
 				</div>
 			</div>
-			<div id="tool" class="tool right w1 fill-h">
-				<div class="bc1 wh1 table" data-bind="css: { active: tool.page() === 'editor' }, click: tool.activate.bind($data.tool, 'editor')">
-					<i class="cell center fa fa-pencil"></i>
-				</div>
+			<div id="tool" class="tool right w1 fill-h scroll-y hide-scroll">
 				<div class="bc1 wh1 table" data-bind="css: { active: tool.page() === 'entry' }, click: tool.activate.bind($data.tool, 'entry')">
 					<i class="cell center fa fa-sitemap"></i>
+				</div>
+				<div class="bc1 wh1 table" data-bind="css: { active: tool.page() === 'editor' }, click: tool.activate.bind($data.tool, 'editor')">
+					<i class="cell center fa fa-pencil"></i>
 				</div>
 				<div class="bc1 wh1 table" data-bind="css: { active: tool.page() === 'shell' }, click: tool.activate.bind($data.tool, 'shell')">
 					<i class="cell center fa fa-terminal"></i>

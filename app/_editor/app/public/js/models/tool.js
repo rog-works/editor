@@ -2,7 +2,7 @@
 
 class Tool {
 	constructor () {
-		this.page = ko.observable('editor');
+		this.page = ko.observable('entry');
 	}
 
 	static init (id = 'tool') {

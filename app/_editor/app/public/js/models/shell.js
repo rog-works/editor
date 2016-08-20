@@ -17,6 +17,24 @@ class Shell extends _Log {
 		// ko.applyBindings(self, document.getElementById(id));
 		return self;
 	}
+	
+	static send (path, data, callback) {
+		const url = `/shell${path}`;
+		let _data = {
+			url: url,
+			type: 'POST',
+			dataType: 'json',
+			success: (res) => {
+				console.log('respond', url);
+				callback(res);
+			},
+			error: (res, err) => {
+				console.error(err, res.status, res.statusText, res.responseText);
+			}
+		};
+		console.log('request', url, data);
+		$.ajax($.extend(_data, data));
+	}
 
 	click (self, e) {
 		if (e.keyCode !== KEY_CODE_ENTER) {
@@ -25,7 +43,7 @@ class Shell extends _Log {
 		// XXX
 		return APP.shell._exec();
 	}
-
+ 
 	_exec () {
 		const query = this.query();
 		if (query.length === 0) {
@@ -33,20 +51,9 @@ class Shell extends _Log {
 		}
 		this.query('');
 		this.line(`$ ${query}`);
-		this.css('disabled');
-		$.ajax({
-			url: '/shell',
-			type: 'POST',
-			data: {query: query},
-			dataType: 'json',
-			success: (result) => {
-				this.css('');
-				if (this.history.indexOf(query) === -1) {
-					this.history.push(query);
-				}
-			},
-			error: (res, err) => {
-				console.error(err, res.status, res.statusText, res.responseText);
+		Shell.send('', {data: {query: query}}, (res) => {
+			if (this.history.indexOf(query) === -1) {
+				this.history.push(query);
 			}
 		});
 		return false;

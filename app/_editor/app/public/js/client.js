@@ -9,8 +9,11 @@ class Application {
 		this.entry = null;
 		this.shell = null;
 		this.log = null;
-		this.w = 0;
-		this.h = 0;
+		// XXX
+		this.style = {
+			width: ko.observable(360),
+			height: ko.observable(520)
+		};
 	}
 
 	load(id = 'main') {
@@ -31,10 +34,6 @@ class Application {
 	
 	_after () {
 		const self = this;
-		const w = window.innerWidth;
-		const h = window.innerHeight;
-		this.w = Math.max(w, h);
-		this.h = Math.min(w, h);
 		this.resize();
 		// XXX handling for resize event
 		window.onresize = () => { self.resize(); };
@@ -51,19 +50,15 @@ class Application {
 	}
 	
 	resize () {
-		console.log('resize');
-		// XXX Diviated with the software keyboard is Displayed
+		console.log('on resize');
 		const w = window.innerWidth;
 		const h = window.innerHeight;
-		const fit = $('.fit');
-		fit.width(w);
-		fit.height(h);
+		this.style.width(w);
+		this.style.height(h);
 		$('.flex-w-32').width(w - 32);
 		// XXX
-		this.editor._editor().resize();
+		this.editor.resize();
 		console.log(w, h);
-		// const viewport = document.getElementsByName('viewport')[0];
-		// viewport.setAttribute('content', `width=${this.w},initial-scale=1.0`);
 	}
 }
 

@@ -26,28 +26,22 @@ class Entry {
 		return self;
 	}
 
-	static send (url, data, callback) {
+	static send (path, data, callback) {
+		const url = `/entry${path}`;
 		const _data = {
-			url: `/entry${url}`,
+			url: url,
 			type: 'GET',
 			dataType: 'json',
-			success: callback,
+			success: (res) => {
+				console.log('respond', url);
+				callback(res);
+			},
 			error: (res, err) => {
-				console.log(err, res.status, res.statusText, res.responseText);
+				console.error(err, res.status, res.statusText, res.responseText);
 			}
 		};
+		console.log('request', url);
 		$.ajax($.extend(_data, data));
-	}
-
-	load (dir = '/') {
-		const url = '/?dir=' + encodeURIComponent(dir);
-		Entry.send(url, {}, (entities) => {
-			APP.entry.entries.removeAll();
-			for (const entry of Entry.toEntries(entities)) {
-				APP.entry.entries.push(entry);
-			}
-			APP.entry.entries.push(new EntryAdd());
-		});
 	}
 
 	static create (path) {
@@ -152,6 +146,17 @@ class EntryRoot extends Entry {
 		super();
 		this.entries = ko.observableArray([]);
 	}
+
+	load (dir = '/') {
+		const url = '/?dir=' + encodeURIComponent(dir);
+		Entry.send(url, {}, (entities) => {
+			APP.entry.entries.removeAll();
+			for (const entry of Entry.toEntries(entities)) {
+				APP.entry.entries.push(entry);
+			}
+			APP.entry.entries.push(new EntryAdd());
+		});
+	}
 }
 
 class EntryAdd extends Entry {
@@ -186,10 +191,9 @@ class EntryFile extends Entry {
 	_load (path = '/') {
 		const url = '/' + encodeURIComponent(path);
 		Entry.send(url, {}, (entity) => {
-			// XXX auto closing to focus editor
-			$('#menu-xs-close').click();
-			APP.editor.load(entity.path, entity.content);
 			this._activate();
+			APP.editor.load(entity.path, entity.content);
+			APP.editor.focus();
 		});
 	}
 

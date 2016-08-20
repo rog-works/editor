@@ -1,7 +1,8 @@
 'use strict';
 
-class Editor {
+class Editor extends Page {
 	constructor () {
+		super();
 		this.path = '#';
 	}
 
@@ -22,6 +23,13 @@ class Editor {
 		session.setUseSoftTabs(config.softTabs);
 		session.setMode(this._toMode(config.mode));
 		this.path = path;
+	}
+	
+	resize (width, height) {
+		this._editor().resize();
+	}
+	
+	focus () {
 		// XXX
 		APP.tool.activate('editor');
 		editor.focus();
