@@ -1,4 +1,5 @@
-/.docker
 *.tgz
+/app/app
+/app/db
+/app/log
 /app/md
-/app/db/data/*

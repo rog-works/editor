@@ -13,4 +13,4 @@ app:
     - 8080:80
   environment:
     PORT: 80
-    MAIN_SCRIPT: /opt/app/_editor/app/server.js
+    MAIN_SCRIPT: /opt/app/app/app/server.js
