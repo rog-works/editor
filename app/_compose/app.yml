@@ -9,8 +9,10 @@ app:
     - /var/log/app
     # docker-compose for Container from host
     - /usr/local/bin/docker-compose:/usr/local/bin/docker-compose
-    # .gitconfig
+    # XXX .gitconfig
     - ~/.gitconfig:/root/.gitconfig
+    # XXX ssh privatee key
+    - ~/.ssh/id_rsa:/root/.ssh/id_rsa
   ports:
     - 8080:80
   environment:
