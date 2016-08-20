@@ -19,4 +19,13 @@ fi
 
 if [ ! -f  /usr/bin/git ]; then
 	sudo yum install git
+	git config --global user.name "rog-works"
+	git config --global user.email rog-works@yahoo.co.jp
+	git config --global alias.st status
+	git config --global alias.ci commit
+	git config --global alias.br branch
+	git config --global alias.ad add
+	git config --global alias.co checkout
+	git config --global alias.df diff
+	git config --global alias.lola 'log --graph --decorate --oneline --all' 
 fi

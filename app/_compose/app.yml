@@ -9,6 +9,8 @@ app:
     - /var/log/app
     # docker-compose for Container from host
     - /usr/local/bin/docker-compose:/usr/local/bin/docker-compose
+    # .gitconfig
+    - ~/.gitconfig:/root/.gitconfig
   ports:
     - 8080:80
   environment:
