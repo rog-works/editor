@@ -26,6 +26,7 @@ class Editor extends Page {
 	}
 	
 	resize (width, height) {
+		super.resize(width, height);
 		this._editor().resize();
 	}
 	
@@ -40,13 +41,11 @@ class Editor extends Page {
 			console.log(e.keyCode);
 			return true;
 		}
-		return APP.editor._save();
+		return APP.editor.save();
 	}
 
 	save () {
-		if (Entry.validSavePath(this.path)) {
-			Entry.update(this.path, this._content());
-		}
+		APP.entry.at(this.path).update(this._content());
 		return false;
 	}
 

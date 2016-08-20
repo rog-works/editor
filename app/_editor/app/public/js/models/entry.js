@@ -1,15 +1,48 @@
 'use strict';
 
-class Entry {
+class Entry extends Page {
 	constructor () {
+		super();
+		this.entries = ko.observableArray([]);
 	}
 
-	extend (entity) {
+	static init (id = 'page-entry') {
+		const self = new Entry();
+		// ko.applyBindings(self, document.getElementById(id));
+		self.load();
+		return self;
+	}
+
+	load (dir = '/') {
+		const url = '/?dir=' + encodeURIComponent(dir);
+		EntryItem.send(url, {}, (entities) => {
+			this.entries.removeAll();
+			entities.map((entity) => {
+				return EntryItem.toEntry(entity);
+			}).forEach((entry) => {
+				this.entries.push(entry);
+			});
+			this.entries.push(new EntryAdd());
+		});
+	}
+
+	at (path) {
+		for (const entry of this.entries()) {
+			if (entry.path === path) {
+				return entry;
+			}
+		}
+		return null;
+	}
+}
+
+class EntryItem {
+	constructor (entity) {
 		const depth = entity.path.split('/').length;
 		this.type = entity.type;
 		this.path = entity.path;
 		this.name = ko.observable(entity.name);
-		this.icon = ko.observable(Entry.toIcon(this.type));
+		this.icon = ko.observable(EntryItem.toIcon(this.type));
 		this.selected = ko.observable(false);
 		this.closed = ko.observable(0);
 		this.edited = ko.observable(false);
@@ -17,13 +50,6 @@ class Entry {
 			dir: entity.dir,
 			depth: depth
 		};
-	}
-
-	static init (id = 'page-entry') {
-		const self = new EntryRoot();
-		// ko.applyBindings(self, document.getElementById(id));
-		self.load();
-		return self;
 	}
 
 	static send (path, data, callback) {
@@ -45,31 +71,30 @@ class Entry {
 	}
 
 	static create (path) {
-		Entry.send('/', {type: 'POST', data: {path: path}}, (entity) => {
-			const entry = Entry.factory(entity);
+		EntryItem.send('/', {type: 'POST', data: {path: path}}, (entity) => {
+			const entry = EntryItem.toEntry(entity);
 			APP.entry.entries.push(entry);
 		});
 	}
 
-	static update (path, content) {
-		const url = '/' + encodeURIComponent(path);
-		Entry.send(url, {type: 'PUT', data: {content: content}}, (entity) => {
+	update (content) {
+		const url = '/' + encodeURIComponent(this.path);
+		EntryItem.send(url, {type: 'PUT', data: {content: content}}, (entity) => {
 			// XXX
-			alert(`${path} entry updated!`);
-			console.log(entity);
+			alert(`${this.path} entry updated!`);
 		});
 	}
 
 	rename () {
 		// XXX
 		const to = window.prompt('change file path', this.path);
-		if (!Entry.validSavePath(to) || Entry.pathExists(to)) {
+		if (!EntryItem.validSavePath(to) || EntryItem.pathExists(to)) {
 			return;
 		}
 		const encodePath = encodeURIComponent(this.path);
 		const encodeTo = encodeURIComponent(to);
 		const url = `/${encodePath}/rename?to=${encodeTo}`;
-		Entry.send(url, {type: 'PUT'}, (toPath) => {
+		EntryItem.send(url, {type: 'PUT'}, (toPath) => {
 			this.path = toPath;
 		});
 	}
@@ -83,7 +108,7 @@ class Entry {
 		}
 		const prev = this.path;
 		const url = '/' + encodeURIComponent(prev);
-		Entry.send(url, {type: 'DELETE'}, (deleted) => {
+		EntryItem.send(url, {type: 'DELETE'}, (deleted) => {
 			const removed = APP.entry.entries.remove((self) => {
 				return self.path === prev;
 			});
@@ -95,17 +120,11 @@ class Entry {
 		this.edited(!this.edited());
 	}
 
-	static toEntries (entities) {
-		return entities.map((self) => {
-			return Entry.factory(self);
-		});
-	}
-
-	static factory(entry) {
-		if (entry.type === 'file') {
-			return new EntryFile(entry);
+	static toEntry(entity) {
+		if (entity.type === 'file') {
+			return new EntryFile(entity);
 		} else {
-			return new EntryDirectory(entry);
+			return new EntryDirectory(entity);
 		}
 	}
 
@@ -141,28 +160,9 @@ class Entry {
 	}
 }
 
-class EntryRoot extends Entry {
-	constructor (entity) {
-		super();
-		this.entries = ko.observableArray([]);
-	}
-
-	load (dir = '/') {
-		const url = '/?dir=' + encodeURIComponent(dir);
-		Entry.send(url, {}, (entities) => {
-			APP.entry.entries.removeAll();
-			for (const entry of Entry.toEntries(entities)) {
-				APP.entry.entries.push(entry);
-			}
-			APP.entry.entries.push(new EntryAdd());
-		});
-	}
-}
-
-class EntryAdd extends Entry {
+class EntryAdd extends EntryItem {
 	constructor () {
-		super();
-		super.extend({
+		super({
 			type: 'file',
 			path: '',
 			name: '- create file -',
@@ -172,16 +172,15 @@ class EntryAdd extends Entry {
 
 	click () {
 		const path = window.prompt('input create file path', '/');
-		if (Entry.validSavePath(path) && !Entry.pathExists(path)) {
-			Entry.create(path);
+		if (EntryItem.validSavePath(path) && !EntryItem.pathExists(path)) {
+			EntryItem.create(path);
 		}
 	}
 }
 
-class EntryFile extends Entry {
+class EntryFile extends EntryItem {
 	constructor (entity) {
-		super();
-		super.extend(entity);
+		super(entity);
 	}
 
 	click () {
@@ -190,7 +189,7 @@ class EntryFile extends Entry {
 
 	_load (path = '/') {
 		const url = '/' + encodeURIComponent(path);
-		Entry.send(url, {}, (entity) => {
+		EntryItem.send(url, {}, (entity) => {
 			this._activate();
 			APP.editor.load(entity.path, entity.content);
 			APP.editor.focus();
@@ -208,16 +207,15 @@ class EntryFile extends Entry {
 	}
 }
 
-class EntryDirectory extends Entry {
+class EntryDirectory extends EntryItem {
 	constructor (entity) {
-		super();
-		super.extend(entity);
+		super(entity);
 		this.expanded = true;
 	}
 
 	click () {
 		this.expanded = !this.expanded;
-		const nextIcon = Entry.toIcon(this.expanded ? 'directory' : 'directoryClose');
+		const nextIcon = EntryItem.toIcon(this.expanded ? 'directory' : 'directoryClose');
 		this.icon(nextIcon);
 		this._toggle(this.path, this.expanded);
 	}

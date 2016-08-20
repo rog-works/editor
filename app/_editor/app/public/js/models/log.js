@@ -1,38 +1,38 @@
 'use strict';
 
-class Log extends _Log {
+class Log extends Page {
 	constructor () {
 		super();
-		this.socket = null;
+		this.logs = ko.observableArray([]);
 	}
 
-	static init (id = 'page-log') {
-		const self = new Log();
-		// XXX depends on APP...
-		APP.ws.on('message', (msg) => { return self._onMessage(msg); });
-		// ko.applyBindings(self, document.getElementById(id));
-		return self;
+	clear () {
+		this.logs.removeAll();
 	}
 
-	on (msg) {
-		return this.line(this._parseLine(msg));
+	put (log) {
+		return this._on(log, false);
 	}
 
-	_parseLine (msg) {
-		let line = '';
-		let delimiter = '';
-		for (let key in msg) {
-			line += delimiter + msg[key];
-			delimiter = ' ';
-		}
-		return line;
+	line (log) {
+		return this._on(log, true);
 	}
 
-	_onMessage ([tag, data]) {
-		if (tag === 'editor.access-log') {
-			return this.on(data);
-		}
+	_on (log, separated) {
+		// console.log(log, separated);
+		this.logs.push(new LogLine(log, separated));
 		return true;
 	}
 }
 
+class LogLine {
+	constructor (log, separated) {
+		this.log = ko.observable(log);
+		this.closed = ko.observable(false);
+		this.separated = ko.observable(separated);
+	}
+
+	expand () {
+		this.closed(!this.closed());
+	}
+}

@@ -2,7 +2,7 @@
 
 const KEY_CODE_ENTER = 13;
 
-class Shell extends _Log {
+class Shell extends Log {
 	constructor () {
 		super();
 		this.query = ko.observable('');

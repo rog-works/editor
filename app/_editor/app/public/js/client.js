@@ -8,25 +8,29 @@ class Application {
 		this.editor = null;
 		this.entry = null;
 		this.shell = null;
-		this.log = null;
-		// XXX
-		this.style = {
-			width: ko.observable(360),
-			height: ko.observable(520)
-		};
+		this.weblog = null;
+		this.size = ko.observable({ width: 360, height: 640 });
+	}
+
+	static init () {
+		const self = new Application();
+		window.onload = () => { self.load(); };
+		return self;
 	}
 
 	load(id = 'main') {
 		try {
+			console.log('On load started');
 			this.ws = new WS();
 			this.tool = Tool.init();
 			this.console = Console.init();
 			this.editor = Editor.init();
 			this.entry = Entry.init();
 			this.shell = Shell.init();
-			this.log = Log.init();
+			this.weblog = Weblog.init();
 			ko.applyBindings(this, document.getElementById(id));
 			this._after();
+			console.log('On load finished');
 		} catch (error) {
 			console.error(error.message, error.stack);
 		}
@@ -35,7 +39,7 @@ class Application {
 	_after () {
 		const self = this;
 		this.resize();
-		// XXX handling for resize event
+		// XXX handling for window event
 		window.onresize = () => { self.resize(); };
 	}
 	
@@ -50,17 +54,20 @@ class Application {
 	}
 	
 	resize () {
-		console.log('on resize');
 		const w = window.innerWidth;
 		const h = window.innerHeight;
-		this.style.width(w);
-		this.style.height(h);
-		$('.flex-w-32').width(w - 32);
-		// XXX
-		this.editor.resize();
-		console.log(w, h);
+		this.size({ width: w, height: h });
+		[
+			this.editor,
+			this.entry,
+			this.shell,
+			this.weblog,
+			this.console
+		].forEach((page) => {
+			page.resize(w - 32, h);
+		});
+		console.log('On resize', w, h);
 	}
 }
 
-const APP = new Application();
-window.onload = () => { APP.load(); };
+const APP = Application.init();

@@ -1,6 +1,6 @@
 'use strict';
 
-class Console extends _Log {
+class Console extends Log {
 	constructor () {
 		super();
 	}
