@@ -18,3 +18,4 @@ app:
   environment:
     PORT: 80
     MAIN_SCRIPT: /opt/app/app/app/server.js
+    TZ: Asia/Tokyo
