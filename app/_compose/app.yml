@@ -19,3 +19,5 @@ app:
     PORT: 80
     MAIN_SCRIPT: /opt/app/app/app/server.js
     TZ: Asia/Tokyo
+  # command:
+  #   - node --debug=18089 /opt/app/app/app/server.js
