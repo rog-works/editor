@@ -1,31 +1,60 @@
-editor-app:
-  extends:
-    file: ../app.yml
-    service: app
-  volumes:
-    # docker for Container from AmazonLinux host
-    - /usr/bin/docker:/usr/bin/docker
-    - /var/run/docker.sock:/var/run/docker.sock
-    - /lib64/libdevmapper.so.1.02:/usr/lib/libdevmapper.so.1.02
-    - /lib64/libudev.so.0:/usr/lib/libudev.so.0
-  environment:
-    ENV: aws
+version: '2'
+services:
+  editor-app:
+    extends:
+      file: ../app.yml
+      service: app
+    volumes:
+      # docker for Container from AmazonLinux host
+      - /usr/bin/docker:/usr/bin/docker
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /lib64/libdevmapper.so.1.02:/usr/lib/libdevmapper.so.1.02
+      - /lib64/libudev.so.0:/usr/lib/libudev.so.0
+    environment:
+      ENV: aws
 
-editor-log:
-  extends:
-    file: ../log.yml
-    service: log
-  volumes_from:
-    - editor-app
+  editor-log:
+    extends:
+      file: ../log.yml
+      service: log
+    volumes_from:
+      - editor-app
 
-# editor-db:
-#   extends:
-#     file: ../db.yml
-#     service: db
+  # editor-db:
+  #   extends:
+  #     file: ../db.yml
+  #     service: db
 
-# editor-md:
-#   extends:
-#     file: ../md.yml
-#     service: md
-#   links:
-#     - editor-db
+  # editor-md:
+  #   extends:
+  #     file: ../md.yml
+  #     service: md
+  #   links:
+  #     - editor-db
+
+  nodered-app:
+    extends:
+      file: ../../conb/compose/app.yml
+      service: app
+    depends_on:
+      - nodered-db
+    links:
+      - nodered-db:database
+
+  nodered-db:
+    extends:
+      file: ../../conb/compose/db.yml
+      service: db
+
+  nodered-webpack:
+    extends:
+      file: ../../conb/compose/webpack.yml
+      service: webpack
+    # setting for AWS
+    depends_on:
+      - editor-log
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: localhost:24224
+        tag: editor.webpack-log

@@ -1,12 +1,14 @@
-log:
-  container_name: editor-log
-  image: localhost:49000/editor-log:latest
-  ports:
-    - 24224:24224
-    - 18082:8080
-  volumes:
-    - ~/editor/app/log/app/etc/fluent-log.conf:/fluentd/etc/fluent-log.conf
-#   volumes_from:
-#     - editor-app
-  environment:
-    FLUENTD_CONF: fluent-log.conf
+version: '2'
+services:
+  log:
+    container_name: editor-log
+    image: localhost:49000/editor-log:latest
+    ports:
+      - 24224:24224
+      - 18082:8080
+    volumes:
+      - ~/editor/app/log/app/etc/fluent-log.conf:/fluentd/etc/fluent-log.conf
+  #   volumes_from:
+  #     - editor-app
+    environment:
+      FLUENTD_CONF: fluent-log.conf

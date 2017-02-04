@@ -1,23 +1,25 @@
-app:
-  container_name: editor-app
-  image: localhost:49000/editor-app:latest
-  privileged: true
-  volumes:
-    # application-root
-    - ~/editor/app:/opt/app
-    # Expose application log
-    - /var/log/app
-    # docker-compose for Container from host
-    - /usr/local/bin/docker-compose:/usr/local/bin/docker-compose
-    # XXX .gitconfig
-    - ~/.gitconfig:/root/.gitconfig
-    # XXX ssh privatee key
-    - ~/.ssh/id_rsa:/root/.ssh/id_rsa
-  ports:
-    - 8080:80
-  environment:
-    PORT: 80
-    MAIN_SCRIPT: /opt/app/app/app/server.js
-    TZ: Asia/Tokyo
-  # command:
-  #   - node --debug=18089 /opt/app/app/app/server.js
+version: '2'
+services:
+  app:
+    container_name: editor-app
+    image: localhost:49000/editor-app:latest
+    privileged: true
+    volumes:
+      # application-root
+      - ~/editor/app:/opt/app
+      # Expose application log
+      - /var/log/app
+      # docker-compose for Container from host
+      - /usr/local/bin/docker-compose:/usr/local/bin/docker-compose
+      # XXX .gitconfig
+      - ~/.gitconfig:/root/.gitconfig
+      # XXX ssh privatee key
+      - ~/.ssh/id_rsa:/root/.ssh/id_rsa
+    ports:
+      - 8080:80
+    environment:
+      PORT: 80
+      MAIN_SCRIPT: /opt/app/app/app/server.js
+      TZ: Asia/Tokyo
+    # command:
+    #   - node --debug=18089 /opt/app/app/app/server.js
