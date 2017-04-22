@@ -17,6 +17,13 @@ services:
     extends:
       file: ../webpack.yml
       service: webpack
+    depends_on:
+      - editor-log
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: localhost:24224
+        tag: editor.webpack-log
 
   editor-log:
     extends:
