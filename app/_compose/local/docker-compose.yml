@@ -19,6 +19,11 @@ services:
     environment:
       ENV: local
 
+  editor-webpack:
+    extends:
+      file: ../webpack.yml
+      service: webpack
+
   editor-log:
     extends:
       file: ../log.yml
