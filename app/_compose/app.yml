@@ -23,3 +23,7 @@ services:
       TZ: Asia/Tokyo
     # command:
     #   - node --debug=18089 /opt/app/app/app/server.js
+    logging:
+      options:
+        max-size: '256k'
+        max-file: '1'

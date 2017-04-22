@@ -23,6 +23,10 @@ services:
     extends:
       file: ../webpack.yml
       service: webpack
+    logging:
+      options:
+        max-size: '256k'
+        max-file: '1'
 
   editor-log:
     extends:
@@ -61,11 +65,7 @@ services:
     extends:
       file: ../../conb/compose/webpack.yml
       service: webpack
-    # setting for AWS
-    depends_on:
-      - editor-log
     logging:
-      driver: fluentd
       options:
-        fluentd-address: localhost:24224
-        tag: editor.webpack-log
+        max-size: '256k'
+        max-file: '1'
