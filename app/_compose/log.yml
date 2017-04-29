@@ -2,7 +2,8 @@ version: '2'
 services:
   log:
     container_name: editor-log
-    image: localhost:49000/editor-log:latest
+    image: editor-log:latest
+    build: ~/editor/app/log/docker
     ports:
       - 24224:24224
       - 18082:8080

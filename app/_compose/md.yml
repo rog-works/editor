@@ -2,7 +2,8 @@ version: '2'
 services:
   md:
     container_name: editor-md
-    image: localhost:49000/editor-md:latest
+    image: editor-md:latest
+    build: ~/editor/app/md/docker
     volumes:
       - ~/editor/app/md/app:/opt/app
     ports:
