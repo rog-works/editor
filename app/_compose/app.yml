@@ -20,7 +20,7 @@ services:
       - 8080:80
     environment:
       PORT: 80
-      MAIN_SCRIPT: /opt/app/app/app/bundle.js
+      MAIN_SCRIPT: /opt/app/app/app/server.bundle.js
       TZ: Asia/Tokyo
     # command:
-    #   - node --debug=18089 /opt/app/app/app/bundle.js
+    #   - node --debug=18089 /opt/app/app/app/server.bundle.js
