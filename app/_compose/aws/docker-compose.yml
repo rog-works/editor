@@ -19,11 +19,11 @@ services:
       service: webpack
     depends_on:
       - editor-log
-    loggind:
+    logging:
       driver: fluentd
       options:
         fluentd-address: localhost:24224
-        tag: editor-webpack-log
+        tag: editor.webpack-log
 
   editor-log:
     extends:
