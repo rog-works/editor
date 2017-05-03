@@ -43,29 +43,29 @@ services:
   #   links:
   #     - editor-db
 
-  nodered-app:
-    extends:
-      file: ../../conb/compose/app.yml
-      service: app
-    depends_on:
-      - nodered-db
-    links:
-      - nodered-db:database
+  # nodered-app:
+  #   extends:
+  #     file: ../../conb/compose/app.yml
+  #     service: app
+  #   depends_on:
+  #     - nodered-db
+  #   links:
+  #     - nodered-db:database
 
-  nodered-db:
-    extends:
-      file: ../../conb/compose/db.yml
-      service: db
+  # nodered-db:
+  #   extends:
+  #     file: ../../conb/compose/db.yml
+  #     service: db
 
-  nodered-webpack:
-    extends:
-      file: ../../conb/compose/webpack.yml
-      service: webpack
-    # setting for AWS
-    depends_on:
-      - editor-log
-    logging:
-      driver: fluentd
-      options:
-        fluentd-address: localhost:24224
-        tag: editor.webpack-log
+  # nodered-webpack:
+  #   extends:
+  #     file: ../../conb/compose/webpack.yml
+  #     service: webpack
+  #   # setting for AWS
+  #   depends_on:
+  #     - editor-log
+  #   logging:
+  #     driver: fluentd
+  #     options:
+  #       fluentd-address: localhost:24224
+  #       tag: editor.webpack-log
