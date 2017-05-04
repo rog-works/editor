@@ -1,8 +1,6 @@
 *.tgz
-/app/app
-/app/db
-/app/log
-/app/md
-/app/debug
-/app/conb
-
+/app
+/db
+/log
+/md
+/conb

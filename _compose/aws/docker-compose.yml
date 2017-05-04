@@ -2,7 +2,7 @@ version: '2'
 services:
   editor-app:
     extends:
-      file: ../app.yml
+      file: ~/editor/app/compose/app.yml
       service: app
     volumes:
       # docker for Container from AmazonLinux host
@@ -15,7 +15,7 @@ services:
 
   editor-webpack:
     extends:
-      file: ../webpack.yml
+      file: ~/editor/app/compose/webpack.yml
       service: webpack
     depends_on:
       - editor-log
@@ -27,26 +27,26 @@ services:
 
   editor-log:
     extends:
-      file: ../log.yml
+      file: ~/editor/log/compose/log.yml
       service: log
     volumes_from:
       - editor-app
 
   # editor-db:
   #   extends:
-  #     file: ../db.yml
+  #     file: ~/editor/db/compose/db.yml
   #     service: db
 
   # editor-md:
   #   extends:
-  #     file: ../md.yml
+  #     file: ~/editor/md/compose/md.yml
   #     service: md
   #   links:
   #     - editor-db
 
   # nodered-app:
   #   extends:
-  #     file: ../../conb/compose/app.yml
+  #     file: ~/editor/conb/compose/app.yml
   #     service: app
   #   depends_on:
   #     - nodered-db
@@ -55,12 +55,12 @@ services:
 
   # nodered-db:
   #   extends:
-  #     file: ../../conb/compose/db.yml
+  #     file: ~/editor/conb/compose/db.yml
   #     service: db
 
   # nodered-webpack:
   #   extends:
-  #     file: ../../conb/compose/webpack.yml
+  #     file: ~/editor/conb/compose/webpack.yml
   #     service: webpack
   #   # setting for AWS
   #   depends_on:
