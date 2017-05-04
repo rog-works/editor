@@ -24,3 +24,7 @@ services:
       MAIN_SCRIPT: /opt/app/app/app/src/Index.js
       TZ: Asia/Tokyo
     command: [node, '--debug=0.0.0.0:18089', /opt/app/app/app/src/Index.js]
+    logging:
+      options:
+        max-size: '128m'
+        max-file: '1'

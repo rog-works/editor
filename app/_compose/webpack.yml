@@ -7,3 +7,7 @@ services:
     volumes:
       - ~/editor/app/app/app:/opt/
     command: 'npm run build'
+    logging:
+      options:
+        max-size: '128m'
+        max-file: '1'
