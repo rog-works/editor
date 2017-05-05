@@ -31,7 +31,7 @@ services:
 
   editor-log:
     extends:
-      file: ~/editor/log/compose/log.yml
+      file: ~/editor/app/compose/log.yml
       service: log
     volumes_from:
       - editor-app
