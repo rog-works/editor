@@ -23,6 +23,8 @@ services:
     extends:
       file: ~/editor/app/compose/webpack.yml
       service: webpack
+    depends_on:
+      - editor-log
     logging:
       driver: fluentd
       options:
