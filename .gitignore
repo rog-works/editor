@@ -1,5 +1,4 @@
 *.tgz
 /app
-/db
 /md
 /conb

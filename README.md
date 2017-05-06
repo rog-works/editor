@@ -23,7 +23,8 @@ $ git clone git@github.com:rog-works/editor.git
 $ cd editor
 $ git clone git@github.com:rog-works/editor-app.git app
 # build docker images
-$ bash compose.sh build
+$ cd app
+$ docker-compose build
 
 # install packages
 $ docker run -it --rm -v `pwd`/app:/opt editor-webpack ash
@@ -34,5 +35,5 @@ $ docker run -it --rm -v `pwd`/app:/opt editor-webpack ash
 [webpack]$ exit
 
 # start application
-$ bash compose.sh up -d
+$ docker-compose up -d
 ```
